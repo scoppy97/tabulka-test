@@ -1,4 +1,5 @@
-import { getBuilding, technologies } from "../data/content";
+import { getBuilding } from "../data/content";
+import { technologies } from "../data/technologies";
 import type {
   Building,
   Cost,
@@ -190,7 +191,7 @@ export function techAvailable(
   );
 }
 export const eraReady = (researched: string[]) =>
-  researched.includes("charter");
+  technologies.every((technology) => researched.includes(technology.id));
 export function serialize(data: GameData) {
   return JSON.stringify(data);
 }
@@ -198,14 +199,14 @@ export function deserialize(raw: string): GameData | null {
   try {
     const d = JSON.parse(raw) as Partial<GameData>;
     if (
-      ![2, 3].includes(d.version ?? 0) ||
+      ![2, 3, 4].includes(d.version ?? 0) ||
       !d.resources ||
       !Array.isArray(d.buildings)
     )
       return null;
     return {
       ...(d as Omit<GameData, "version" | "population">),
-      version: 3,
+      version: 4,
       population: assignWorkforce(d.buildings),
     };
   } catch {
@@ -230,7 +231,7 @@ export function freshGame(name = "Nová naděje"): GameData {
     { id: "statue2", type: "statue", x: 13, y: 10 },
   ];
   return {
-    version: 3,
+    version: 4,
     cityName: name,
     resources: {
       gold: 1000,

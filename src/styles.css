@@ -134,6 +134,12 @@ button:disabled {
 .gear {
   font-size: 19px;
 }
+.researchButton {
+  white-space: nowrap;
+  margin-right: 8px;
+  background: linear-gradient(135deg, #765326, #a87835);
+  border-color: #e1b666;
+}
 .nav {
   position: fixed;
   z-index: 18;
@@ -480,8 +486,9 @@ button:disabled {
 }
 .techTree {
   display: grid;
-  grid-template-columns: repeat(6, minmax(145px, 1fr));
-  grid-template-rows: repeat(2, 220px);
+  grid-template-columns: repeat(3, minmax(210px, 280px));
+  grid-template-rows: 310px;
+  justify-content: center;
   gap: 30px;
   position: relative;
   padding: 20px;
@@ -492,6 +499,28 @@ button:disabled {
   background: #1c2c36;
   padding: 15px;
   position: relative;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    filter 0.2s;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.techTree article:hover,
+.techTree article:focus-visible {
+  transform: translateY(-5px);
+  z-index: 5;
+}
+.techTree article.locked {
+  filter: grayscale(1);
+  opacity: 0.48;
+}
+.techTree article.researching {
+  border-color: #6fb8d9;
+  box-shadow: 0 0 25px #61b9dc55;
 }
 .techTree article.available {
   border-color: #d7a84e;
@@ -501,16 +530,37 @@ button:disabled {
   border-color: #659e72;
   background: #203b37;
 }
-.techTree article > span {
+.techTree article > .techIcon {
   font-size: 28px;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  background: #101c24;
+  border-radius: 50%;
+  border: 2px solid #6f8089;
+}
+.techTree article > em {
+  font-size: 10px;
+  font-style: normal;
+  margin-top: 8px;
+  color: #d7b36c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 .techTree h3 {
   font-family: Cinzel;
   color: #e5c280;
+  margin: 8px 0;
 }
 .techTree p {
   font-size: 12px;
   color: #b6c2c8;
+  min-height: 45px;
+}
+.techTree small {
+  color: #d7c9ae;
+  margin: 3px;
 }
 .techTree button {
   position: absolute;
@@ -518,6 +568,78 @@ button:disabled {
   left: 12px;
   right: 12px;
   background: #9a6c31;
+}
+.treeLine {
+  position: absolute;
+  top: 68px;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #9b7546, transparent);
+}
+.researchStatus {
+  max-width: 900px;
+  margin: 0 auto 15px;
+  padding: 14px 18px;
+  border: 1px solid #6ba4bc;
+  border-radius: 12px;
+  background: #182d39;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 15px;
+  box-shadow: 0 8px 25px #0005;
+}
+.researchStatus > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.researchStatus > div:first-child b {
+  margin-left: auto;
+  color: #8bd4ef;
+}
+.researchProgress {
+  height: 10px;
+  border-radius: 8px;
+  background: #0b171e;
+  overflow: hidden;
+}
+.researchProgress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #4c9ec1, #92dbee);
+  transition: width 0.08s linear;
+  box-shadow: 0 0 12px #75cef1;
+}
+.researchStatus button {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  background: #633b3b;
+}
+.techTooltip {
+  pointer-events: none;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  width: 240px;
+  transform: translate(-50%, 6px);
+  background: #08141ced;
+  border: 1px solid #d5aa63;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  transition: 0.18s;
+  box-shadow: 0 8px 22px #000a;
+}
+.techTree article:hover .techTooltip,
+.techTree article:focus-visible .techTooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 .eraAdvance {
   display: block;

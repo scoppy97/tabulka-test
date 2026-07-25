@@ -24,6 +24,7 @@ export interface BuildingDef {
   output?: { resource: Resource; amount: number; seconds: number };
   color: string;
   description: string;
+  requiredTechnology?: string;
 }
 export interface Building {
   id: string;
@@ -77,7 +78,9 @@ export interface Technology {
   id: string;
   name: string;
   description: string;
-  cost: number;
+  icon: string;
+  cost: Cost;
+  seconds: number;
   epoch: 1 | 2;
   requires: string[];
   unlocks: string[];
@@ -105,12 +108,13 @@ export interface Quest {
 }
 export type View = "city" | "tech" | "world" | "army" | "quests";
 export interface GameData {
-  version: 3;
+  version: 4;
   cityName: string;
   resources: Resources;
   buildings: Building[];
   population: PopulationState;
   researched: string[];
+  activeResearch?: { technologyId: string; startedAt: number; endsAt: number };
   epoch: 1 | 2;
   units: Unit[];
   training?: { type: string; endsAt: number };
