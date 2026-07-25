@@ -2,6 +2,8 @@ import { getBuilding, technologies } from "../data/content";
 import type { Building, Cost, GameData, Resources, Unit } from "../types";
 import { isBuildableTerrain, MAP_SIZE, terrain, terrainAt } from "./terrain";
 import type { TerrainTile } from "./terrain";
+import { buildingProduction } from "../data/production";
+import type { EconomyResource } from "../data/resources";
 export { MAP_SIZE };
 export function occupied(buildings: Building[], ignore?: string) {
   const cells = new Set<string>();
@@ -101,6 +103,22 @@ export function applyCost(r: Resources, c: Cost, factor = -1) {
     n[k as keyof Resources] += factor * (v ?? 0);
   return n;
 }
+export function produceResources(
+  resources: Resources,
+  buildings: Building[],
+  seconds: number,
+  now = Date.now(),
+) {
+  const next = { ...resources };
+  for (const building of buildings) {
+    if (building.readyAt && building.readyAt > now) continue;
+    const rates = buildingProduction[building.type];
+    if (!rates) continue;
+    for (const [resource, rate] of Object.entries(rates))
+      next[resource as EconomyResource] += (rate ?? 0) * seconds;
+  }
+  return next;
+}
 export function calculateDamage(attack: number, defense: number, variance = 0) {
   return Math.max(
     1,
@@ -138,7 +156,7 @@ export function serialize(data: GameData) {
 export function deserialize(raw: string): GameData | null {
   try {
     const d = JSON.parse(raw) as Partial<GameData>;
-    if (d.version !== 1 || !d.resources || !Array.isArray(d.buildings))
+    if (d.version !== 2 || !d.resources || !Array.isArray(d.buildings))
       return null;
     return d as GameData;
   } catch {
@@ -161,11 +179,11 @@ export function freshGame(name = "Nová naděje"): GameData {
     { id: "statue2", type: "statue", x: 12, y: 10 },
   ];
   return {
-    version: 1,
+    version: 2,
     cityName: name,
     resources: {
-      coins: 1000,
-      supplies: 500,
+      gold: 1000,
+      food: 500,
       wood: 150,
       stone: 100,
       research: 3,
@@ -181,6 +199,7 @@ export function freshGame(name = "Nová naděje"): GameData {
     tutorialDone: false,
     settings: { sound: true, speed: 1 },
     lastResearchAt: now,
+    lastResourceAt: now,
   };
 }
 export function makeUnit(type: string, id = crypto.randomUUID()): Unit {
