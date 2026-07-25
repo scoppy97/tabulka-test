@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   battleWinner,
+  assignWorkforce,
   calculateDamage,
   canPlace,
   deserialize,
   eraReady,
   freshGame,
   happinessMultiplier,
+  hasRequiredWorkers,
   occupied,
   produceResources,
   productionReady,
@@ -52,6 +54,34 @@ describe("ekonomika a čas", () => {
   it("dokončí produkci podle absolutního času", () =>
     expect(productionReady(100, 101)).toBe(true));
 });
+describe("populace a pracovní síla", () => {
+  it("přiděluje pracovníky automaticky v pořadí staveb", () => {
+    const buildings = [
+      { id: "home", type: "hut", x: 0, y: 0 },
+      { id: "lumber", type: "sawmill", x: 3, y: 0 },
+      { id: "quarry", type: "quarry", x: 6, y: 0 },
+      { id: "farm", type: "farm", x: 9, y: 0 },
+    ];
+    const population = assignWorkforce(buildings);
+    expect(population).toMatchObject({
+      total: 5,
+      employedWorkers: 5,
+      availableWorkers: 0,
+      workerAssignments: { lumber: 2, quarry: 2, farm: 1 },
+    });
+    expect(hasRequiredWorkers(buildings[1], population)).toBe(true);
+    expect(hasRequiredWorkers(buildings[3], population)).toBe(false);
+  });
+  it("zastaví výrobu budovy bez potřebných pracovníků", () => {
+    const game = freshGame();
+    const buildings = [{ id: "lumber", type: "sawmill", x: 0, y: 0 }];
+    const population = assignWorkforce(buildings);
+    expect(
+      produceResources(game.resources, buildings, 2, Date.now(), population)
+        .wood,
+    ).toBe(game.resources.wood);
+  });
+});
 describe("postup a boj", () => {
   it("ověří technologii a epochu", () => {
     expect(techAvailable("tools", { researched: [], epoch: 1 })).toBe(true);
@@ -71,6 +101,7 @@ it("serializuje a bezpečně načte hru", () => {
   const g = freshGame();
   expect(deserialize(serialize(g))?.cityName).toBe(g.cityName);
   expect(deserialize(serialize(g))?.resources).toEqual(g.resources);
+  expect(deserialize(serialize(g))?.population).toEqual(g.population);
   expect(deserialize("{bad")).toBeNull();
 });
 describe("procedurální terén", () => {

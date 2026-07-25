@@ -104,6 +104,28 @@ button:disabled {
   font-size: 10px;
   color: #aab7bf;
 }
+.populationPanel {
+  min-width: 190px;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: 1px solid #ffffff24;
+  border-radius: 8px;
+  background: #10192380;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px 10px;
+  font-size: 10px;
+}
+.populationPanel strong {
+  grid-column: 1 / -1;
+  color: #e9c27d;
+}
+.populationPanel span {
+  color: #b8c3ca;
+}
+.populationPanel b {
+  color: #f4ead7;
+}
 .era {
   color: #e2b86f;
   font: 600 13px Cinzel;
@@ -234,6 +256,25 @@ button:disabled {
   padding: 2px 5px;
   border-radius: 5px;
   white-space: nowrap;
+}
+.cityBuilding small {
+  margin-top: 2px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: #16232ddd;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.cityBuilding.inactive {
+  opacity: 0.58;
+  filter: brightness(0.68);
+}
+.cityBuilding.inactive.selected {
+  filter: brightness(0.8);
+}
+.cityBuilding .workerWarning {
+  right: -7px;
+  background: #d88630;
 }
 .cityBuilding em,
 .cityBuilding i {
