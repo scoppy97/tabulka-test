@@ -192,98 +192,189 @@ function TownHall() {
   return (
     <>
       <SharedDefs id="hall" />
+      <defs>
+        <linearGradient id="hall-warmStone" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#f5e4bd" />
+          <stop offset=".52" stopColor="#d8bd8d" />
+          <stop offset="1" stopColor="#a98259" />
+        </linearGradient>
+        <linearGradient id="hall-deepRoof" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#718695" />
+          <stop offset=".42" stopColor="#425968" />
+          <stop offset="1" stopColor="#233744" />
+        </linearGradient>
+      </defs>
       <ellipse
         className="buildingAssetShadow"
-        cx="110"
-        cy="139"
-        rx="96"
-        ry="18"
+        cx="125"
+        cy="218"
+        rx="110"
+        ry="15"
+      />
+      {/* Lower civic wings form a wide base beneath the dominant tower. */}
+      <path
+        d="M13 137 66 105l51 27-55 33Z"
+        fill="url(#hall-deepRoof)"
+        stroke={outline}
+        strokeWidth="3"
+        strokeLinejoin="round"
       />
       <path
-        d="m27 82 83-46 87 45-87 50Z"
-        fill="url(#hall-stone)"
+        d="m62 165 55-33v62l-55 32Z"
+        fill="#ad895f"
         stroke={outline}
         strokeWidth="3"
       />
       <path
-        d="m27 82 83 45v38l-83-45Z"
-        fill="#d2b682"
+        d="m15 138 47 27v61l-47-27Z"
+        fill="url(#hall-warmStone)"
         stroke={outline}
         strokeWidth="3"
       />
       <path
-        d="m110 127 87-46v38l-87 47Z"
-        fill="#a78761"
+        d="m133 132 51-29 54 29-56 33Z"
+        fill="url(#hall-deepRoof)"
+        stroke={outline}
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m133 132 49 27v67l-49-28Z"
+        fill="url(#hall-warmStone)"
         stroke={outline}
         strokeWidth="3"
       />
       <path
-        d="m17 80 91-52 100 51-13 13-87-45-80 46Z"
-        fill="url(#hall-roof)"
+        d="m182 159 56-27v62l-56 32Z"
+        fill="#a37e56"
+        stroke={outline}
+        strokeWidth="3"
+      />
+      {/* Tall central tower, deliberately rising far above both roof lines. */}
+      <path
+        d="m82 69 43-25 44 23-44 27Z"
+        fill="url(#hall-deepRoof)"
         stroke={outline}
         strokeWidth="4"
         strokeLinejoin="round"
       />
       <path
-        d="M83 46V18l27-15 29 15v58"
-        fill="#c8aa78"
+        d="m125 94 44-27v126l-44 27Z"
+        fill="#a47c54"
         stroke={outline}
         strokeWidth="3"
       />
       <path
-        d="m74 18 36-20 38 19-10 10-28-14-27 15Z"
-        fill="#3b5261"
-        stroke={outline}
-        strokeWidth="3"
-      />
-      <path d="M108-1v-12" stroke="#57402c" strokeWidth="3" />
-      <path
-        d="M110-13q18 2 29 10l-14 5-15-5Z"
-        fill="#366b8b"
-        stroke="#d5a844"
-        strokeWidth="2"
-      />
-      <path
-        d="m96 32 13-7 14 7v24l-27 15Z"
-        fill="#568b9d"
-        stroke={outline}
-        strokeWidth="2"
-      />
-      <path
-        d="m91 110 19-11 20 10v51l-39-21Z"
-        fill="#5c3928"
+        d="m82 69 43 25v126l-43-25Z"
+        fill="url(#hall-warmStone)"
         stroke={outline}
         strokeWidth="3"
       />
       <path
-        d="m45 98 18 10v20l-18-10Zm109 2 20-10v20l-20 11Z"
-        fill="#73aeb4"
+        d="m87 76 33 19v111"
+        fill="none"
+        stroke="#fff4d5"
+        strokeWidth="3"
+        opacity=".45"
+      />
+      <path
+        d="m164 77-34 21v112"
+        fill="none"
+        stroke="#76583e"
+        strokeWidth="4"
+        opacity=".45"
+      />
+      <path
+        d="m76 67 49-32 51 29-8 12-43-23-41 26Z"
+        fill="url(#hall-deepRoof)"
+        stroke={outline}
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      <path d="m125 35 51 29-8 12-43-23Z" fill="#2c414f" opacity=".85" />
+      <path
+        d="M125 36V11"
+        stroke="#59442f"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path
+        d="M127 12q20 1 32 10l-16 6-16-6Z"
+        fill="#355e83"
+        stroke="#d2a83e"
+        strokeWidth="2"
+      />
+      {/* Clock, windows, and restrained ceremonial banners. */}
+      <circle
+        cx="125"
+        cy="89"
+        r="13"
+        fill="#f1ddb1"
+        stroke={outline}
+        strokeWidth="3"
+      />
+      <path
+        d="M125 89v-7m0 7 6 3"
+        stroke="#496171"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="m96 115 12 7v22l-12-7Zm0 38 12 7v22l-12-7Z"
+        fill="#557d91"
         stroke={outline}
         strokeWidth="2"
       />
       <path
-        d="m74 121 13 7v23l-13-7Zm61 5 14-8v24l-14 7Z"
-        fill="#6fa3aa"
+        d="m142 116 12-7v22l-12 8Zm0 38 12-8v22l-12 8Z"
+        fill="#456b80"
         stroke={outline}
         strokeWidth="2"
       />
       <path
-        d="m98 90 12-14 13 1 8 14-21 12Z"
-        fill="#d3a643"
+        d="m31 160 13 7v19l-13-7Zm46 5 13-8v20l-13 8Zm72-4 13 7v20l-13-8Zm48 3 14-7v20l-14 8Z"
+        fill="#60899a"
         stroke={outline}
         strokeWidth="2"
       />
       <path
-        d="m105 153 14 7-9 13-15-8Z"
-        fill="#b5a17e"
+        d="m68 130 10 5v28l-5 5-5-10Zm104 5 10-6v29l-5 11-5-6Z"
+        fill="#355f88"
+        stroke="#d4aa45"
+        strokeWidth="1.5"
+      />
+      {/* Recessed entrance and broad stone stair descending toward the viewer. */}
+      <path
+        d="m106 177 19-11 19 10v40l-38-21Z"
+        fill="#44382e"
+        stroke={outline}
+        strokeWidth="3"
+      />
+      <path d="m111 178 14-8 14 8-14 8Z" fill="#d6ad50" opacity=".75" />
+      <path
+        d="m96 199 29 16 29-16 8 5-37 22-38-21Z"
+        fill="#d8c39c"
         stroke={outline}
         strokeWidth="2"
       />
       <path
-        d="m119 158 13 7-9 13-13-7Z"
-        fill="#8f8069"
+        d="m87 205 38 21 37-22 9 5-46 28-47-26Z"
+        fill="#b49a75"
         stroke={outline}
         strokeWidth="2"
+      />
+      <path
+        d="m21 145 38 22m80-26 38 21"
+        stroke="#fff1cc"
+        strokeWidth="2"
+        opacity=".32"
+      />
+      <path
+        d="m184 166 48-24v44"
+        fill="none"
+        stroke="#75563c"
+        strokeWidth="3"
+        opacity=".35"
       />
     </>
   );
@@ -298,7 +389,7 @@ export function BuildingVisual({ type }: { type: IllustratedBuildingType }) {
     <svg
       className="buildingAsset"
       style={style}
-      viewBox={type === "townhall" ? "0 -16 220 198" : "0 0 180 150"}
+      viewBox={type === "townhall" ? "0 0 250 242" : "0 0 180 150"}
       role="img"
       aria-label={config.label}
     >
