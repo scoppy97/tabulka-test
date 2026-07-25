@@ -8,7 +8,14 @@ import {
   technologies,
   units,
 } from "../data/content";
-import { calculateDamage, demographics, roadConnected } from "../domain/rules";
+import {
+  calculateDamage,
+  canPlace,
+  demographics,
+  occupied,
+  roadConnected,
+} from "../domain/rules";
+import { cityTerrain } from "../domain/terrain";
 import { cs } from "../i18n";
 import { useGame } from "../store/gameStore";
 import type { Building, Unit, View } from "../types";
@@ -231,44 +238,146 @@ function Header({ demo }: { demo: ReturnType<typeof demographics> }) {
 function City() {
   const s = useGame(),
     a = s.actions;
-  const [pan, setPan] = useState({ x: 0, y: 0 }),
-    [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null);
+  const viewport = React.useRef<HTMLElement | null>(null);
   const down = React.useRef<{
     x: number;
     y: number;
     px: number;
     py: number;
   } | null>(null);
+  const panTarget = React.useRef({ x: 0, y: 0 });
+  const zoomTarget = React.useRef(1);
+  const keys = React.useRef(new Set<string>());
+  const edge = React.useRef({ x: 0, y: 0 });
   const selected = s.buildings.find((b) => b.id === s.selected);
+  const occupiedCells = useMemo(() => occupied(s.buildings), [s.buildings]);
+  const placingDefinition = s.placing ? getBuilding(s.placing) : null;
+  const footprint = useMemo(() => {
+    const cells = new Set<string>();
+    if (!hovered || !placingDefinition) return cells;
+    for (let x = hovered.x; x < hovered.x + placingDefinition.w; x += 1)
+      for (let y = hovered.y; y < hovered.y + placingDefinition.h; y += 1)
+        cells.add(`${x},${y}`);
+    return cells;
+  }, [hovered, placingDefinition]);
+  const footprintValid = Boolean(
+    hovered &&
+    s.placing &&
+    canPlace(s.buildings, s.placing, hovered.x, hovered.y),
+  );
+
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) =>
+      keys.current.add(event.key.toLowerCase());
+    const keyUp = (event: KeyboardEvent) =>
+      keys.current.delete(event.key.toLowerCase());
+    addEventListener("keydown", keyDown);
+    addEventListener("keyup", keyUp);
+    let frame = 0;
+    const animate = () => {
+      const speed = 7 / zoomTarget.current;
+      const horizontal =
+        (keys.current.has("a") ? 1 : 0) -
+        (keys.current.has("d") ? 1 : 0) +
+        edge.current.x;
+      const vertical =
+        (keys.current.has("w") ? 1 : 0) -
+        (keys.current.has("s") ? 1 : 0) +
+        edge.current.y;
+      if (!down.current) {
+        panTarget.current.x += horizontal * speed;
+        panTarget.current.y += vertical * speed;
+      }
+      setPan((current) => {
+        const dx = panTarget.current.x - current.x;
+        const dy = panTarget.current.y - current.y;
+        return Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05
+          ? current
+          : { x: current.x + dx * 0.18, y: current.y + dy * 0.18 };
+      });
+      setZoom((current) => {
+        const delta = zoomTarget.current - current;
+        return Math.abs(delta) < 0.001 ? current : current + delta * 0.16;
+      });
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("keydown", keyDown);
+      removeEventListener("keyup", keyUp);
+    };
+  }, []);
+
+  const updateEdge = (event: React.PointerEvent<HTMLElement>) => {
+    const bounds = viewport.current?.getBoundingClientRect();
+    if (!bounds || down.current) return;
+    const margin = 34;
+    edge.current = {
+      x:
+        event.clientX < bounds.left + margin
+          ? 1
+          : event.clientX > bounds.right - margin
+            ? -1
+            : 0,
+      y:
+        event.clientY < bounds.top + margin
+          ? 1
+          : event.clientY > bounds.bottom - margin
+            ? -1
+            : 0,
+    };
+  };
+
   const tile = (
-    e: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>,
     x: number,
     y: number,
   ) => {
-    e.stopPropagation();
+    event.stopPropagation();
     if (s.placing) a.place(s.placing, x, y);
   };
+
   return (
     <>
       <section
+        ref={viewport}
         className="cityViewport"
-        onWheel={(e) =>
-          setZoom((z) => Math.max(0.65, Math.min(1.35, z - e.deltaY * 0.001)))
-        }
-        onPointerDown={(e) => {
-          if ((e.target as HTMLElement).classList.contains("cityViewport"))
-            down.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+        onWheel={(event) => {
+          event.preventDefault();
+          zoomTarget.current = Math.max(
+            0.62,
+            Math.min(1.45, zoomTarget.current - event.deltaY * 0.0012),
+          );
         }}
-        onPointerMove={(e) => {
-          if (down.current)
-            setPan({
-              x: down.current.px + e.clientX - down.current.x,
-              y: down.current.py + e.clientY - down.current.y,
-            });
+        onPointerDown={(event) => {
+          if (!(event.target as HTMLElement).closest("button"))
+            down.current = {
+              x: event.clientX,
+              y: event.clientY,
+              px: panTarget.current.x,
+              py: panTarget.current.y,
+            };
+        }}
+        onPointerMove={(event) => {
+          updateEdge(event);
+          if (down.current) {
+            panTarget.current = {
+              x: down.current.px + event.clientX - down.current.x,
+              y: down.current.py + event.clientY - down.current.y,
+            };
+          }
+        }}
+        onPointerLeave={() => {
+          edge.current = { x: 0, y: 0 };
+          down.current = null;
         }}
         onPointerUp={() => (down.current = null)}
-        onContextMenu={(e) => {
-          e.preventDefault();
+        onContextMenu={(event) => {
+          event.preventDefault();
           a.placeMode();
         }}
       >
@@ -277,32 +386,68 @@ function City() {
           <span></span>
           <span></span>
         </div>
+        <div className="terrainLegend" aria-label="Legenda terénu">
+          <span>
+            <i className="legendFertile" /> Úrodná půda
+          </span>
+          <span>
+            <i className="legendForest" /> Les
+          </span>
+          <span>
+            <i className="legendRock" /> Skály
+          </span>
+          <span>
+            <i className="legendWater" /> Voda
+          </span>
+        </div>
         <div
           className="iso"
           style={{
             transform: `translate(${pan.x}px,${pan.y}px) scale(${zoom})`,
           }}
         >
-          {Array.from({ length: 400 }, (_, i) => {
-            const x = i % 20,
-              y = Math.floor(i / 20);
+          {cityTerrain.map((terrain) => {
+            const key = `${terrain.x},${terrain.y}`;
+            const inFootprint = footprint.has(key);
+            const classes = [
+              "tile",
+              `terrain-${terrain.type}`,
+              `variant-${terrain.variant}`,
+              s.placing ? "placing" : "",
+              occupiedCells.has(key) ? "occupied" : "",
+              inFootprint
+                ? footprintValid
+                  ? "footprint-valid"
+                  : "footprint-invalid"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
             return (
               <button
-                aria-label={`Pole ${x}, ${y}`}
-                onClick={(e) => tile(e, x, y)}
-                className={s.placing ? "tile placing" : "tile"}
-                style={{ left: 600 + (x - y) * 32, top: 50 + (x + y) * 16 }}
-                key={i}
-              />
+                aria-label={`Pole ${terrain.x}, ${terrain.y} · ${terrain.type}`}
+                onClick={(event) => tile(event, terrain.x, terrain.y)}
+                onPointerEnter={() =>
+                  setHovered({ x: terrain.x, y: terrain.y })
+                }
+                className={classes}
+                style={{
+                  left: 600 + (terrain.x - terrain.y) * 32,
+                  top: 50 + (terrain.x + terrain.y) * 16,
+                }}
+                key={key}
+              >
+                <span className="terrainDetail" />
+              </button>
             );
           })}
-          {s.buildings.map((b) => (
-            <CityBuilding key={b.id} b={b} />
+          {s.buildings.map((building) => (
+            <CityBuilding key={building.id} b={building} />
           ))}
         </div>
         <div className="cameraHelp">
-          <Icon name="move" size={14} /> Táhnout kameru · kolečko: přiblížení ·
-          pravé tlačítko: zrušit
+          <Icon name="move" size={14} /> WASD / okraj obrazovky · táhnout myší ·
+          kolečko: plynulý zoom
         </div>
       </section>
       {selected && <Detail b={selected} />}
@@ -314,7 +459,26 @@ function CityBuilding({ b }: { b: Building }) {
     a = s.actions,
     d = getBuilding(b.type),
     connected = roadConnected(b, s.buildings),
-    done = !!b.production && Date.now() >= b.production.endsAt;
+    done = !!b.production && Date.now() >= b.production.endsAt,
+    roadConnections =
+      b.type === "road"
+        ? [
+            [0, -1, "n"],
+            [1, 0, "e"],
+            [0, 1, "s"],
+            [-1, 0, "w"],
+          ]
+            .filter(([dx, dy]) =>
+              s.buildings.some(
+                (other) =>
+                  other.type === "road" &&
+                  other.x === b.x + Number(dx) &&
+                  other.y === b.y + Number(dy),
+              ),
+            )
+            .map(([, , direction]) => direction)
+            .join("")
+        : "";
   return (
     <button
       data-testid={`building-${b.type}`}
@@ -322,7 +486,7 @@ function CityBuilding({ b }: { b: Building }) {
         e.stopPropagation();
         a.select(b.id);
       }}
-      className={`cityBuilding ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""}`}
+      className={`cityBuilding ${b.type === "road" ? `roadBuilding road-${roadConnections || "single"}` : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""}`}
       style={{
         left: 600 + (b.x - b.y) * 32,
         top: 50 + (b.x + b.y) * 16 - d.h * 7,
@@ -334,6 +498,15 @@ function CityBuilding({ b }: { b: Building }) {
       <span className="roof">
         <Icon name={b.type as IconName} size={30} />
       </span>
+      {b.type === "road" &&
+        (roadConnections || "")
+          .split("")
+          .map((direction) => (
+            <span
+              className={`roadSegment segment-${direction}`}
+              key={direction}
+            />
+          ))}
       <b>{d.name}</b>
       {d.requiresRoad && !connected && (
         <em title="Budova není spojena s radnicí">

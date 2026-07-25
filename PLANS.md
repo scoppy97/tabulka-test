@@ -21,6 +21,15 @@
 - [x] Nové dialogy, tutorial, oznámení a bitevní překryv
 - [x] Rozdělení stylů na tokeny, shell, město, obrazovky a překryvy
 
+## Základ mapy města
+
+- [x] Deterministické generování trávy, úrodné půdy, lesů, skal a jezer
+- [x] Validace celého půdorysu budovy proti terénu a obsazeným polím
+- [x] Zelené a červené zvýraznění půdorysu během stavění
+- [x] Plynulý zoom, WASD, tažení a posun kamery u okraje obrazovky
+- [x] Automatické vizuální napojování sousedních úseků cest
+- [x] Úsporné CSS detaily terénu bez externích assetů a částic
+
 ## Datový model
 
 Verzovaný `GameState` obsahuje zdroje, instance budov s produkčními timestampy, technologie, epochu, armádu a frontu výcviku, úkoly, provincie, tutorial a nastavení. Neměnný herní obsah je definovaný samostatně a instance na něj odkazují ID.

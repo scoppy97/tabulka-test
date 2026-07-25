@@ -4,7 +4,8 @@ Původní český vertikální prototyp strategické městské hry. Hráč sprav
 
 ## Funkce
 
-- 20×20 izometrická mapa s posunem, zoomem, náhledem, stavbou, přesunem a bouráním.
+- Deterministická procedurální izometrická mapa 20×20 s loukami, úrodnou půdou, lesy, skalami a jezery.
+- Plynulá kamera s tažením, WASD, posunem u okrajů obrazovky, zoomem a barevným náhledem celého půdorysu stavby.
 - Dvanáct datově definovaných budov, skutečné vyhledání cesty k radnici, populace a čtyři stupně spokojenosti.
 - Ruční časovaná produkce, tři směny dílny, absolutní timestampy a offline dokončení.
 - Deset technologií ve dvou epochách, automatická obnova výzkumných bodů a slavnostní postup.
@@ -45,7 +46,7 @@ Myší táhněte prázdnou plochu, kolečkem měňte zoom. Kliknutí vybírá bu
 ## Struktura projektu
 
 - `src/data` – neměnný obsah budov, technologií, jednotek, provincií a úkolů.
-- `src/domain` – čistá pravidla mřížky, cest, ekonomiky, postupu, boje a serializace.
+- `src/domain` – čistá pravidla mřížky, procedurálního terénu, cest, ekonomiky, postupu, boje a serializace.
 - `src/store` – Zustand akce, časovače a verzovaná perzistence.
 - `src/game` – Phaser adaptéry scén města a bitvy.
 - `src/ui` – React obrazovky, herní interakce a vlastní SVG komponenty.

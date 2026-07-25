@@ -81,11 +81,86 @@
     filter 0.12s,
     background 0.12s;
 }
-.tile:nth-child(5n) {
-  background: linear-gradient(145deg, #829f68, #6b8958);
+.tile .terrainDetail {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: inherit;
 }
-.tile:nth-child(11n) {
-  background: linear-gradient(145deg, #78935f, #63804f);
+.terrain-grass {
+  background: linear-gradient(145deg, #789765, #5f8054);
+}
+.terrain-grass.variant-1,
+.terrain-grass.variant-3 {
+  background: linear-gradient(145deg, #809e6b, #668657);
+}
+.terrain-fertile {
+  background: linear-gradient(145deg, #95a96d, #758f57);
+}
+.terrain-fertile .terrainDetail {
+  opacity: 0.27;
+  background: repeating-linear-gradient(
+    155deg,
+    transparent 0 7px,
+    rgba(239, 222, 145, 0.4) 8px,
+    transparent 9px 13px
+  );
+}
+.terrain-forest {
+  background: linear-gradient(145deg, #496f4f, #315743);
+}
+.terrain-forest .terrainDetail::before,
+.terrain-forest .terrainDetail::after {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 14px;
+  border-radius: 60% 40% 55% 45%;
+  background: radial-gradient(circle at 35% 30%, #789867, #31543e 70%);
+  filter: drop-shadow(2px 4px 2px rgba(15, 33, 22, 0.35));
+}
+.terrain-forest .terrainDetail::before {
+  left: 16px;
+  top: 7px;
+}
+.terrain-forest .terrainDetail::after {
+  right: 15px;
+  top: 10px;
+  transform: scale(0.78);
+}
+.terrain-rock {
+  background: linear-gradient(145deg, #7a8078, #59635f);
+}
+.terrain-rock .terrainDetail::before {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 6px;
+  width: 21px;
+  height: 16px;
+  clip-path: polygon(18% 92%, 0 55%, 31% 8%, 69% 0, 100% 63%, 81% 100%);
+  background: linear-gradient(135deg, #b2b3a9, #656d69 65%);
+  filter: drop-shadow(3px 4px 2px rgba(18, 28, 27, 0.35));
+}
+.terrain-water {
+  border-color: rgba(178, 218, 216, 0.2);
+  background: linear-gradient(145deg, #568b8c, #3f747c);
+}
+.terrain-water .terrainDetail {
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    165deg,
+    transparent 0 8px,
+    rgba(210, 239, 228, 0.45) 9px,
+    transparent 10px 16px
+  );
+  animation: waterShimmer 4s linear infinite;
+}
+@keyframes waterShimmer {
+  50% {
+    transform: translateX(4px);
+    opacity: 0.22;
+  }
 }
 .tile:hover {
   z-index: 1;
@@ -94,12 +169,23 @@
   border-color: rgba(238, 230, 185, 0.3) !important;
   box-shadow: inset 0 0 12px rgba(246, 236, 183, 0.09) !important;
 }
-.tile.placing:hover {
+.tile.placing:hover,
+.tile.footprint-valid {
   background: linear-gradient(145deg, #9bc087, #6f9b6b);
   border-color: rgba(219, 243, 199, 0.75) !important;
   box-shadow:
     inset 0 0 18px rgba(204, 239, 190, 0.3),
     0 0 12px rgba(136, 193, 125, 0.35) !important;
+}
+.tile.footprint-invalid {
+  border-color: rgba(244, 148, 126, 0.82) !important;
+  background: linear-gradient(145deg, #a8675d, #774c49) !important;
+  box-shadow:
+    inset 0 0 16px rgba(106, 30, 27, 0.28),
+    0 0 10px rgba(202, 86, 72, 0.25) !important;
+}
+.tile.occupied.placing:not(.footprint-valid):not(.footprint-invalid) {
+  filter: saturate(0.7) brightness(0.82);
 }
 .cityBuilding {
   position: absolute;
@@ -181,6 +267,91 @@
   outline: 2px solid rgba(229, 201, 141, 0.55);
   outline-offset: 3px;
   filter: brightness(1.14);
+}
+.roadBuilding {
+  width: 52px !important;
+  min-height: 26px;
+  padding: 0;
+  transform: translate(-50%, -8%) !important;
+  border: 0;
+  border-radius: 50%;
+  background: #957b59 !important;
+  box-shadow: 0 6px 5px rgba(24, 35, 24, 0.25);
+}
+.roadBuilding::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 4px 7px;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: #b0966e;
+}
+.roadBuilding .roof,
+.roadBuilding > b {
+  display: none;
+}
+.roadSegment {
+  position: absolute;
+  z-index: 0;
+  left: 22px;
+  top: 7px;
+  width: 9px;
+  height: 20px;
+  border-radius: 2px;
+  background: #b0966e;
+}
+.segment-n {
+  transform: translate(-8px, -11px) rotate(63deg);
+}
+.segment-e {
+  transform: translate(9px, -4px) rotate(-63deg);
+}
+.segment-s {
+  transform: translate(8px, 9px) rotate(63deg);
+}
+.segment-w {
+  transform: translate(-9px, 4px) rotate(-63deg);
+}
+.roadBuilding:hover {
+  transform: translate(-50%, -12%) scale(1.04) !important;
+}
+.terrainLegend {
+  position: absolute;
+  z-index: 6;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(12, 27, 33, 0.7);
+  backdrop-filter: blur(9px);
+}
+.terrainLegend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  color: rgba(243, 234, 216, 0.78);
+  font-size: 9px;
+}
+.terrainLegend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+.legendFertile {
+  background: #91a568;
+}
+.legendForest {
+  background: #3c6548;
+}
+.legendRock {
+  background: #777f7a;
+}
+.legendWater {
+  background: #4b8187;
 }
 .cameraHelp {
   position: absolute;
