@@ -5,9 +5,9 @@ import {
   getUnit,
   provinces,
   quests,
-  technologies,
   units,
 } from "../data/content";
+import { technologies } from "../data/technologies";
 import {
   calculateDamage,
   canAfford,
@@ -195,6 +195,12 @@ function Header({ demo }: { demo: ReturnType<typeof demographics> }) {
       <div className="era">
         Epocha {s.epoch === 1 ? "osadníků" : "prvních měst"}
       </div>
+      <button
+        className="researchButton"
+        onClick={() => s.actions.setView("tech")}
+      >
+        🔬 Výzkum
+      </button>
       <button
         className="gear"
         aria-label="Nastavení"
@@ -564,7 +570,10 @@ function BuildBar() {
         {buildingDefs
           .filter((d) => d.category === cat)
           .map((d) => {
-            const locked = d.epoch > s.epoch,
+            const locked =
+                d.epoch > s.epoch ||
+                (!!d.requiredTechnology &&
+                  !s.researched.includes(d.requiredTechnology)),
               starterOnly =
                 d.id === "townhall" &&
                 s.buildings.some((building) => building.type === "townhall"),
@@ -585,7 +594,7 @@ function BuildBar() {
                   </small>
                   <small>
                     {locked
-                      ? "🔒 Vyžaduje další epochu"
+                      ? `🔒 ${d.requiredTechnology ? "Vyžaduje výzkum" : "Vyžaduje další epochu"}`
                       : starterOnly
                         ? "✓ Počáteční budova již stojí"
                         : !affordable
@@ -603,35 +612,93 @@ function BuildBar() {
 function Tech() {
   const s = useGame(),
     a = s.actions;
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const frame = setInterval(() => setNow(Date.now()), 50);
+    return () => clearInterval(frame);
+  }, []);
+  const activeTechnology = technologies.find(
+    (technology) => technology.id === s.activeResearch?.technologyId,
+  );
+  const progress = s.activeResearch
+    ? Math.min(
+        100,
+        ((now - s.activeResearch.startedAt) /
+          (s.activeResearch.endsAt - s.activeResearch.startedAt)) *
+          100,
+      )
+    : 0;
   return (
     <section className="screen tech">
       <div className="screenTitle">
         <span>✦</span>
         <div>
-          <h1>Stezka poznání</h1>
-          <p>Výzkumný bod přibývá každou minutu · zásoba nejvýše 10</p>
+          <h1>Technologický strom</h1>
+          <p>Věk 1 · Poznání mění možnosti tvého města</p>
         </div>
-        <b>{s.resources.research} ✨</b>
+        <b>VĚK 1</b>
       </div>
+      {s.activeResearch && activeTechnology && (
+        <aside className="researchStatus" aria-live="polite">
+          <div>
+            <span>{activeTechnology.icon}</span>
+            <strong>Probíhá výzkum: {activeTechnology.name}</strong>
+            <b>
+              {Math.max(0, Math.ceil((s.activeResearch.endsAt - now) / 1000))} s
+            </b>
+          </div>
+          <div className="researchProgress">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+          <button onClick={a.cancelResearch}>Zrušit výzkum</button>
+        </aside>
+      )}
       <div className="techTree">
+        <div className="treeLine" aria-hidden="true" />
         {technologies.map((t) => {
           const done = s.researched.includes(t.id),
             available =
               t.epoch <= s.epoch &&
               !done &&
-              t.requires.every((r) => s.researched.includes(r));
+              !s.activeResearch &&
+              t.requires.every((r) => s.researched.includes(r)) &&
+              canAfford(s.resources, t.cost),
+            researching = s.activeResearch?.technologyId === t.id;
           return (
             <article
               style={{ gridColumn: t.x + 1, gridRow: t.y + 1 }}
-              className={done ? "done" : available ? "available" : "locked"}
+              className={
+                done
+                  ? "done"
+                  : researching
+                    ? "researching"
+                    : available
+                      ? "available"
+                      : "locked"
+              }
               key={t.id}
+              tabIndex={0}
+              title={`${t.name}: ${t.description} Odemkne: ${t.unlocks.join(", ")}`}
             >
-              <span>{done ? "✓" : available ? "✦" : "🔒"}</span>
+              <span className="techIcon">{t.icon}</span>
+              <em>
+                {done
+                  ? "✓ Hotovo"
+                  : researching
+                    ? "⌛ Probíhá"
+                    : available
+                      ? "Dostupné"
+                      : "🔒 Zamčeno"}
+              </em>
               <h3>{t.name}</h3>
               <p>{t.description}</p>
-              <small>
-                Epocha {t.epoch} · {t.cost} ✨
-              </small>
+              <small>{formatCost(t.cost)}</small>
+              <small>⏱ {t.seconds} sekund</small>
+              <div className="techTooltip" role="tooltip">
+                <b>{t.name}</b>
+                <span>{t.description}</span>
+                <span>Odemkne: {t.unlocks.join(", ")}</span>
+              </div>
               {available && (
                 <button onClick={() => a.research(t.id)}>Prozkoumat</button>
               )}
@@ -639,11 +706,6 @@ function Tech() {
           );
         })}
       </div>
-      {s.epoch === 1 && s.researched.includes("charter") && (
-        <button className="eraAdvance" onClick={a.advanceEra}>
-          Vstoupit do epochy prvních měst →
-        </button>
-      )}
     </section>
   );
 }

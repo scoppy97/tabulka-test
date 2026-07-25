@@ -4,8 +4,8 @@ import {
   getBuilding,
   getUnit,
   quests,
-  technologies,
 } from "../data/content";
+import { technologies } from "../data/technologies";
 import {
   applyCost,
   assignWorkforce,
@@ -48,6 +48,7 @@ interface Store extends GameData {
     startProduction: (id: string, seconds?: number) => void;
     collect: (id: string) => void;
     research: (id: string) => void;
+    cancelResearch: () => void;
     advanceEra: () => void;
     train: (type: string) => void;
     tick: () => void;
@@ -96,6 +97,13 @@ export const useGame = create<Store>((set, get) => ({
       }
       if (d.epoch > s.epoch || !canAfford(s.resources, d.cost)) {
         set({ notice: "Nedostatek zdrojů." });
+        return false;
+      }
+      if (
+        d.requiredTechnology &&
+        !s.researched.includes(d.requiredTechnology)
+      ) {
+        set({ notice: "Budovu musí nejprve odemknout výzkum." });
         return false;
       }
       const b: Building = {
@@ -232,16 +240,41 @@ export const useGame = create<Store>((set, get) => ({
     research: (id) => {
       const s = get(),
         t = technologies.find((v) => v.id === id);
-      if (!t || !techAvailable(id, s) || s.resources.research < t.cost) {
+      if (
+        !t ||
+        s.activeResearch ||
+        !techAvailable(id, s) ||
+        !canAfford(s.resources, t.cost)
+      ) {
         set({ notice: "Technologie zatím není dostupná." });
         return;
       }
+      const startedAt = Date.now();
       set({
-        researched: [...s.researched, id],
-        resources: { ...s.resources, research: s.resources.research - t.cost },
-        notice: "Nová technologie odemčena.",
+        activeResearch: {
+          technologyId: id,
+          startedAt,
+          endsAt: startedAt + t.seconds * 1000,
+        },
+        resources: applyCost(s.resources, t.cost),
+        notice: `${t.name}: výzkum zahájen.`,
       });
-      get().actions.event("research");
+      persist(get());
+    },
+    cancelResearch: () => {
+      const s = get(),
+        active = s.activeResearch;
+      if (!active) return;
+      const technology = technologies.find(
+        (item) => item.id === active.technologyId,
+      );
+      set({
+        activeResearch: undefined,
+        resources: technology
+          ? applyCost(s.resources, technology.cost, 1)
+          : s.resources,
+        notice: "Výzkum zrušen a zdroje vráceny.",
+      });
       persist(get());
     },
     advanceEra: () => {
@@ -317,6 +350,21 @@ export const useGame = create<Store>((set, get) => ({
         };
         set(patch);
         get().actions.event("train");
+        persist(get());
+        return;
+      }
+      if (s.activeResearch && now >= s.activeResearch.endsAt) {
+        const technologyId = s.activeResearch.technologyId;
+        patch = {
+          ...patch,
+          activeResearch: undefined,
+          researched: s.researched.includes(technologyId)
+            ? s.researched
+            : [...s.researched, technologyId],
+          notice: "Výzkum dokončen — nové možnosti jsou odemčeny!",
+        };
+        set(patch);
+        get().actions.event("research");
         persist(get());
         return;
       }

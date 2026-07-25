@@ -84,8 +84,8 @@ describe("populace a pracovní síla", () => {
 });
 describe("postup a boj", () => {
   it("ověří technologii a epochu", () => {
-    expect(techAvailable("tools", { researched: [], epoch: 1 })).toBe(true);
-    expect(eraReady(["charter"])).toBe(true);
+    expect(techAvailable("forestry", { researched: [], epoch: 1 })).toBe(true);
+    expect(eraReady(["forestry", "masonry", "agriculture"])).toBe(true);
   });
   it("počítá kontrolovatelné poškození", () =>
     expect(calculateDamage(12, 10, 0)).toBe(7));
