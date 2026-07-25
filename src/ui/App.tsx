@@ -22,6 +22,8 @@ import {
   decorationAt,
   placementGridVisible,
   roadConnectionAt,
+  treeVisualsAt,
+  type TreeVisualDescriptor,
 } from "../domain/mapVisuals";
 import { cs } from "../i18n";
 import { formatCost, resourceDefinitions } from "../data/resources";
@@ -216,6 +218,42 @@ function Header({ demo }: { demo: ReturnType<typeof demographics> }) {
     </header>
   );
 }
+
+function TerrainTree({
+  tree,
+  x,
+  y,
+}: {
+  tree: TreeVisualDescriptor;
+  x: number;
+  y: number;
+}) {
+  return (
+    <span
+      className="terrainTree"
+      style={{
+        left: 600 + (x - y) * 32 + 32 + tree.offsetX,
+        top: 50 + (x + y) * 16 + 16 + tree.offsetY,
+        zIndex: 40 + x + y + tree.order,
+      }}
+      aria-hidden="true"
+    >
+      <span className="terrainTreeShadow" />
+      <img
+        className="terrainTreeImage"
+        src={tree.src}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        style={{
+          width: tree.baseWidth,
+          transform: `translate(-50%, -100%) scale(${tree.scale})`,
+        }}
+      />
+    </span>
+  );
+}
+
 function City() {
   const s = useGame(),
     a = s.actions;
@@ -374,13 +412,20 @@ function City() {
                 }}
                 key={`${t.x},${t.y}`}
               >
-                <span className="terrainTexture" />
+                {t.type !== "forest" && <span className="terrainTexture" />}
                 {decoration && (
                   <span className={`terrainDetail decoration-${decoration}`} />
                 )}
               </button>
             );
           })}
+          {terrain
+            .filter((tile) => tile.type === "forest")
+            .flatMap((tile) =>
+              treeVisualsAt(tile.x, tile.y, tile.variant, 417).map((tree) => (
+                <TerrainTree key={tree.id} tree={tree} x={tile.x} y={tile.y} />
+              )),
+            )}
           {[...s.buildings]
             .sort((x, y) => x.x + x.y - y.x - y.y)
             .map((b) => (
