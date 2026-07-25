@@ -18,6 +18,11 @@ import {
   roadConnected,
 } from "../domain/rules";
 import { terrain } from "../domain/terrain";
+import {
+  decorationAt,
+  placementGridVisible,
+  roadConnectionAt,
+} from "../domain/mapVisuals";
 import { cs } from "../i18n";
 import { formatCost, resourceDefinitions } from "../data/resources";
 import { useGame } from "../store/gameStore";
@@ -280,7 +285,7 @@ function City() {
       for (let y = hovered.y; y < hovered.y + d.h; y++)
         cells.set(`${x},${y}`, valid);
     return cells;
-  }, [s.placing, s.buildings, hovered]);
+  }, [s.placing, s.buildings, s.resources, hovered]);
   const tile = (
     e: React.MouseEvent<HTMLButtonElement>,
     x: number,
@@ -354,13 +359,14 @@ function City() {
         >
           {terrain.map((t) => {
             const preview = footprint.get(`${t.x},${t.y}`),
-              isOccupied = blocked.has(`${t.x},${t.y}`);
+              isOccupied = blocked.has(`${t.x},${t.y}`),
+              decoration = decorationAt(t.x, t.y, t.type);
             return (
               <button
                 aria-label={`Pole ${t.x}, ${t.y}`}
                 onMouseEnter={() => setHovered({ x: t.x, y: t.y })}
                 onClick={(e) => tile(e, t.x, t.y)}
-                className={`tile terrain-${t.type} variant-${t.variant}${preview === true ? " placement-valid" : preview === false ? " placement-invalid" : ""}${s.placing && isOccupied ? " occupied" : ""}`}
+                className={`tile terrain-${t.type} variant-${t.variant}${placementGridVisible(s.placing) ? " construction-grid" : ""}${preview === true ? " placement-valid" : preview === false ? " placement-invalid" : ""}${s.placing && isOccupied ? " occupied" : ""}`}
                 style={{
                   left: 600 + (t.x - t.y) * 32,
                   top: 50 + (t.x + t.y) * 16,
@@ -368,7 +374,10 @@ function City() {
                 }}
                 key={`${t.x},${t.y}`}
               >
-                <span className="terrainDetail" />
+                <span className="terrainTexture" />
+                {decoration && (
+                  <span className={`terrainDetail decoration-${decoration}`} />
+                )}
               </button>
             );
           })}
@@ -395,7 +404,9 @@ function CityBuilding({ b }: { b: Building }) {
     done = !!b.production && Date.now() >= b.production.endsAt,
     active = hasRequiredWorkers(b, s.population),
     assigned = s.population.workerAssignments[b.id] ?? 0,
-    required = d.workerCost ?? 0;
+    required = d.workerCost ?? 0,
+    roadVisual =
+      b.type === "road" ? roadConnectionAt(b.x, b.y, s.buildings) : undefined;
   return (
     <button
       data-testid={`building-${b.type}`}
@@ -403,7 +414,7 @@ function CityBuilding({ b }: { b: Building }) {
         e.stopPropagation();
         a.select(b.id);
       }}
-      className={`cityBuilding ${b.type === "road" ? "roadBuilding" : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""} ${active ? "" : "inactive"}`}
+      className={`cityBuilding ${b.type === "road" ? `roadBuilding road-${roadVisual}` : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""} ${active ? "" : "inactive"}`}
       style={{
         left: 600 + (b.x - b.y) * 32,
         top: 50 + (b.x + b.y) * 16 - (b.type === "road" ? 0 : d.h * 7),

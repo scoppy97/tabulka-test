@@ -49,7 +49,8 @@ export function generateTerrain(seed = 417): TerrainTile[] {
       else if (cityClearing && !roadClearing && variation > 0.76)
         type = "fertile";
 
-      tiles.push({ x, y, type, variant: Math.floor(variation * 4) });
+      // Six visual variants break up repetition without changing biome rules.
+      tiles.push({ x, y, type, variant: Math.floor(variation * 6) });
     }
   }
   return tiles;

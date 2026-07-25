@@ -17,6 +17,11 @@ import {
   techAvailable,
 } from "./rules";
 import { generateTerrain, terrainAt } from "./terrain";
+import {
+  decorationAt,
+  placementGridVisible,
+  roadConnectionAt,
+} from "./mapVisuals";
 describe("pravidla města", () => {
   const game = freshGame();
   it("eviduje obsazená pole", () =>
@@ -124,5 +129,64 @@ describe("procedurální terén", () => {
       false,
     );
     expect(terrainAt(tiles, 0, 0)?.type).toMatch(/grass|fertile/);
+  });
+});
+describe("vizuální vrstva mapy", () => {
+  it("generuje dekorace deterministicky a bez uloženého stavu", () => {
+    const first = generateTerrain(42).map((tile) =>
+      decorationAt(tile.x, tile.y, tile.type, 42),
+    );
+    const second = generateTerrain(42).map((tile) =>
+      decorationAt(tile.x, tile.y, tile.type, 42),
+    );
+    expect(first).toEqual(second);
+    expect(first.some(Boolean)).toBe(true);
+  });
+  it("vybírá konce, rovné úseky, rohy, T a křižovatky cest", () => {
+    const road = (id: string, x: number, y: number) => ({
+      id,
+      type: "road",
+      x,
+      y,
+    });
+    expect(roadConnectionAt(1, 1, [road("c", 1, 1)])).toBe("isolated");
+    expect(roadConnectionAt(1, 1, [road("c", 1, 1), road("e", 2, 1)])).toBe(
+      "end-e",
+    );
+    expect(
+      roadConnectionAt(1, 1, [
+        road("c", 1, 1),
+        road("e", 2, 1),
+        road("w", 0, 1),
+      ]),
+    ).toBe("straight-h");
+    expect(
+      roadConnectionAt(1, 1, [
+        road("c", 1, 1),
+        road("n", 1, 0),
+        road("e", 2, 1),
+      ]),
+    ).toBe("corner-ne");
+    expect(
+      roadConnectionAt(1, 1, [
+        road("c", 1, 1),
+        road("n", 1, 0),
+        road("e", 2, 1),
+        road("s", 1, 2),
+      ]),
+    ).toBe("t-e");
+    expect(
+      roadConnectionAt(1, 1, [
+        road("c", 1, 1),
+        road("n", 1, 0),
+        road("e", 2, 1),
+        road("s", 1, 2),
+        road("w", 0, 1),
+      ]),
+    ).toBe("cross");
+  });
+  it("zobrazuje mřížku jen s aktivním stavebním nástrojem", () => {
+    expect(placementGridVisible()).toBe(false);
+    expect(placementGridVisible("road")).toBe(true);
   });
 });

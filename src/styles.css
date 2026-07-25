@@ -185,7 +185,8 @@ button:disabled {
   position: absolute;
   inset: 0 0 174px 0;
   overflow: hidden;
-  background: linear-gradient(#5f8993 0 28%, #76935d 29%);
+  background:
+    linear-gradient(180deg, #9db5aa 0 20%, #789781 28%, #647e4d 29%), #657f4d;
   touch-action: none;
 }
 .sky span {
@@ -226,17 +227,223 @@ button:disabled {
   width: 64px;
   height: 32px;
   padding: 0;
-  border: 1px solid #d4e19b33;
+  border: 0;
   border-radius: 0;
-  background: #719253;
+  background: #668447;
   transform: rotate(0);
   clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
 }
-.tile:nth-child(7n) {
-  background: #789b59;
+.tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    145deg,
+    #fff1 0 34%,
+    transparent 35% 70%,
+    #1b291828
+  );
+  pointer-events: none;
 }
-.tile.placing:hover {
-  background: #63d674;
+.tile.construction-grid {
+  border: 1px solid #e6dfb42b;
+}
+.tile.construction-grid:hover {
+  filter: brightness(1.17);
+  outline: 1px solid #ebd49a88;
+}
+.tile.placement-valid {
+  background: #6f9659;
+  box-shadow: inset 0 0 0 2px #9ec58a;
+}
+.tile.placement-invalid,
+.tile.occupied {
+  background: #9a6258;
+  box-shadow: inset 0 0 0 2px #c18b7f;
+}
+
+/* Cached CSS layers provide six quiet variants without image requests or DOM-heavy dressing. */
+.terrain-grass.variant-0 {
+  background: #708c4d;
+}
+.terrain-grass.variant-1 {
+  background: #769354;
+}
+.terrain-grass.variant-2 {
+  background: #68864a;
+}
+.terrain-grass.variant-3 {
+  background: #7b9251;
+}
+.terrain-grass.variant-4 {
+  background: #6c894e;
+}
+.terrain-grass.variant-5 {
+  background: #748a48;
+}
+.terrain-fertile {
+  background: #7d8d49;
+}
+.terrain-fertile.variant-1,
+.terrain-fertile.variant-4 {
+  background: #879651;
+}
+.terrain-fertile .terrainTexture {
+  position: absolute;
+  inset: 8px 13px;
+  border-radius: 50%;
+  background: #b59a5744;
+  transform: rotate(-8deg);
+}
+.terrainTexture,
+.terrainDetail {
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+.terrain-grass .terrainTexture {
+  inset: 6px 12px;
+  background:
+    radial-gradient(ellipse at 20% 60%, #455e2c55 0 2px, transparent 3px),
+    radial-gradient(ellipse at 76% 35%, #b4ae6640 0 3px, transparent 4px);
+}
+
+.terrain-lake {
+  background: #315f68;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 3px #9b8d5b66;
+}
+.terrain-lake.variant-0,
+.terrain-lake.variant-4 {
+  background: #295661;
+}
+.terrain-lake .terrainTexture {
+  inset: 0;
+  width: 130%;
+  background: repeating-linear-gradient(
+    165deg,
+    transparent 0 6px,
+    #a6d3c423 7px 8px,
+    transparent 9px 15px
+  );
+  animation: water-flow 4.8s linear infinite;
+}
+@keyframes water-flow {
+  to {
+    transform: translateX(-16px);
+  }
+}
+.terrain-lake::after {
+  background: linear-gradient(145deg, #d2e9d72b, transparent 45%, #102f3a44);
+}
+
+.terrain-forest {
+  background: #4d6c3c;
+}
+.terrain-forest .terrainTexture {
+  left: 17px;
+  top: 0;
+  width: 31px;
+  height: 27px;
+  background:
+    radial-gradient(ellipse at 35% 55%, #294b2b 0 9px, transparent 10px),
+    radial-gradient(ellipse at 65% 44%, #426b35 0 10px, transparent 11px);
+  filter: drop-shadow(7px 7px 3px #1b291866);
+}
+.terrain-forest.variant-1 .terrainTexture {
+  transform: scale(0.86) rotate(4deg);
+}
+.terrain-forest.variant-2 .terrainTexture {
+  transform: scale(1.06) rotate(-5deg);
+  filter: drop-shadow(7px 8px 3px #17241670) brightness(0.9);
+}
+.terrain-forest.variant-3 .terrainTexture {
+  transform: scale(0.94);
+  filter: drop-shadow(7px 7px 3px #17241670) hue-rotate(12deg);
+}
+.terrain-forest.variant-4 .terrainTexture {
+  transform: scale(1.1, 0.82) rotate(6deg);
+}
+.terrain-forest.variant-5 .terrainTexture {
+  transform: scale(0.8, 1.08) rotate(-3deg);
+  filter: drop-shadow(7px 8px 3px #17241670) brightness(1.08);
+}
+
+.terrain-rock {
+  background: #6d704e;
+}
+.terrain-rock .terrainTexture {
+  left: 18px;
+  top: 6px;
+  width: 31px;
+  height: 19px;
+  clip-path: polygon(
+    14% 75%,
+    26% 22%,
+    51% 4%,
+    67% 30%,
+    84% 26%,
+    100% 76%,
+    76% 95%,
+    28% 91%
+  );
+  background: linear-gradient(135deg, #aaa589, #6e7165 52%, #454a43);
+  filter: drop-shadow(7px 6px 3px #20251977);
+}
+.terrain-rock.variant-1 .terrainTexture {
+  transform: scale(0.8) rotate(8deg);
+}
+.terrain-rock.variant-2 .terrainTexture {
+  transform: scale(1.08) rotate(-4deg);
+  filter: drop-shadow(7px 6px 3px #20251977) brightness(0.86);
+}
+.terrain-rock.variant-3 .terrainTexture {
+  transform: scale(0.92, 1.1) rotate(5deg);
+}
+.terrain-rock.variant-4 .terrainTexture {
+  transform: scale(0.72, 1.05) rotate(-9deg);
+  filter: drop-shadow(7px 6px 3px #20251977) brightness(1.12);
+}
+.terrain-rock.variant-5 .terrainTexture {
+  transform: scale(1.02, 0.8) rotate(11deg);
+}
+
+.terrainDetail {
+  left: 28px;
+  top: 13px;
+  width: 10px;
+  height: 6px;
+}
+.decoration-flowers {
+  background:
+    radial-gradient(circle, #e2c574 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 20%, #dcae87 0 1px, transparent 2px);
+}
+.decoration-tuft,
+.decoration-reeds {
+  border-left: 2px solid #3e632f;
+  border-right: 1px solid #8a8d45;
+  transform: skew(-15deg);
+}
+.decoration-pebbles {
+  background: radial-gradient(ellipse, #777363 0 2px, transparent 3px);
+}
+.decoration-dry-patch {
+  width: 18px;
+  border-radius: 50%;
+  background: #9a7d4b55;
+}
+.decoration-bush {
+  border-radius: 50%;
+  background: #335b30;
+  box-shadow: 5px -1px #466d35;
+}
+.decoration-branch,
+.decoration-driftwood {
+  height: 2px;
+  width: 13px;
+  background: #64482d;
+  transform: rotate(-17deg);
 }
 .cityBuilding {
   position: absolute;
@@ -246,11 +453,86 @@ button:disabled {
   padding: 4px;
   border: 0;
   border-radius: 50% 50% 10px 10px;
-  box-shadow: 0 12px 5px #16291866;
+  box-shadow:
+    8px 12px 6px #16291866,
+    inset 0 -6px 10px #1b241d44;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+.cityBuilding:not(.roadBuilding)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 6%;
+  right: 6%;
+  bottom: -7px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6d5434aa;
+  box-shadow: 8px 7px 7px #17211655;
+}
+.roadBuilding {
+  min-height: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  background: #806946 !important;
+  box-shadow: none;
+}
+.roadBuilding .roof,
+.roadBuilding b {
+  display: none;
+}
+.roadBuilding::before,
+.roadBuilding::after {
+  content: "";
+  position: absolute;
+  background: #ad9162;
+  opacity: 0.95;
+}
+.roadBuilding::after {
+  background: repeating-linear-gradient(
+    90deg,
+    #71593b44 0 2px,
+    transparent 2px 7px
+  );
+}
+.road-straight-h::before,
+.road-end-e::before,
+.road-end-w::before {
+  width: 100%;
+  height: 11px;
+  transform: rotate(26.5deg);
+}
+.road-straight-v::before,
+.road-end-n::before,
+.road-end-s::before {
+  width: 100%;
+  height: 11px;
+  transform: rotate(-26.5deg);
+}
+.road-cross::before,
+.road-t-n::before,
+.road-t-e::before,
+.road-t-s::before,
+.road-t-w::before,
+.road-isolated::before {
+  inset: 6px 10px;
+  transform: rotate(0);
+}
+.road-corner-ne::before,
+.road-corner-es::before,
+.road-corner-sw::before,
+.road-corner-wn::before {
+  inset: 6px 10px;
+  border-radius: 50%;
+}
+.roadBuilding::after {
+  inset: 12px 6px;
+  transform: rotate(0);
 }
 .cityBuilding .roof {
   font-size: 27px;
