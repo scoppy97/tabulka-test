@@ -13,7 +13,7 @@ export const BUILDING_VISUALS: Record<
 > = {
   hut: { width: 132, lift: 10, label: "Dům" },
   workshop: { width: 176, lift: 14, label: "Městská dílna" },
-  townhall: { width: 224, lift: 22, label: "Radnice pokroku" },
+  townhall: { width: 248, lift: 36, label: "Radnice pokroku" },
 };
 
 export function hasBuildingVisual(
