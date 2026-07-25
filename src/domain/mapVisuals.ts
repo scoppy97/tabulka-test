@@ -1,4 +1,8 @@
-import { DECORATION_TYPES, type DecorationType } from "../assets/visuals";
+import {
+  DECORATION_TYPES,
+  TREE_VARIANTS,
+  type DecorationType,
+} from "../assets/visuals";
 import type { Building } from "../types";
 import type { TerrainType } from "./terrain";
 
@@ -8,6 +12,59 @@ const hash = (x: number, y: number, seed: number, salt = 0) => {
   value = Math.imul(value ^ (value >>> 13), 1274126177);
   return (value ^ (value >>> 16)) >>> 0;
 };
+
+export interface TreeVisualDescriptor {
+  id: string;
+  src: string;
+  baseWidth: number;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+  order: number;
+}
+
+const unit = (value: number) => value / 0xffffffff;
+
+/** Stable, visual-only tree placement. These descriptors are regenerated, never saved. */
+export function treeVisualsAt(
+  x: number,
+  y: number,
+  terrainVariant: number,
+  seed = 417,
+): TreeVisualDescriptor[] {
+  const mainHash = hash(x, y, seed, terrainVariant * 19);
+  const variant = TREE_VARIANTS[mainHash % TREE_VARIANTS.length];
+  const main: TreeVisualDescriptor = {
+    ...variant,
+    id: `${x}-${y}-main-${variant.id}`,
+    scale: Math.min(
+      1.12,
+      Math.max(
+        0.85,
+        variant.scale * (0.85 + unit(hash(x, y, seed, 31)) * 0.27),
+      ),
+    ),
+    offsetX: variant.offsetX - 8 + unit(hash(x, y, seed, 47)) * 16,
+    offsetY: variant.offsetY - 1 + unit(hash(x, y, seed, 59)) * 2,
+    order: 1,
+  };
+
+  if (hash(x, y, seed, 71) % 100 >= 30) return [main];
+
+  const sapling = TREE_VARIANTS[3];
+  const side = hash(x, y, seed, 83) % 2 === 0 ? -1 : 1;
+  return [
+    {
+      ...sapling,
+      id: `${x}-${y}-secondary-${sapling.id}`,
+      scale: 0.58 + unit(hash(x, y, seed, 97)) * 0.12,
+      offsetX: side * (9 + unit(hash(x, y, seed, 101)) * 5),
+      offsetY: 1 + unit(hash(x, y, seed, 107)) * 2,
+      order: 0,
+    },
+    main,
+  ];
+}
 
 /** Stable visual-only ground dressing, regenerated rather than persisted. */
 export function decorationAt(

@@ -340,33 +340,39 @@ button:disabled {
 .terrain-forest {
   background: #4d6c3c;
 }
-.terrain-forest .terrainTexture {
-  left: 17px;
+
+.terrainTree {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow: visible;
+}
+.terrainTreeImage {
+  position: absolute;
+  left: 0;
   top: 0;
-  width: 31px;
-  height: 27px;
-  background:
-    radial-gradient(ellipse at 35% 55%, #294b2b 0 9px, transparent 10px),
-    radial-gradient(ellipse at 65% 44%, #426b35 0 10px, transparent 11px);
-  filter: drop-shadow(7px 7px 3px #1b291866);
+  max-width: none;
+  height: auto;
+  border: 0;
+  background: none;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: bottom center;
+  filter: drop-shadow(4px 6px 3px rgba(20, 31, 19, 0.32));
 }
-.terrain-forest.variant-1 .terrainTexture {
-  transform: scale(0.86) rotate(4deg);
-}
-.terrain-forest.variant-2 .terrainTexture {
-  transform: scale(1.06) rotate(-5deg);
-  filter: drop-shadow(7px 8px 3px #17241670) brightness(0.9);
-}
-.terrain-forest.variant-3 .terrainTexture {
-  transform: scale(0.94);
-  filter: drop-shadow(7px 7px 3px #17241670) hue-rotate(12deg);
-}
-.terrain-forest.variant-4 .terrainTexture {
-  transform: scale(1.1, 0.82) rotate(6deg);
-}
-.terrain-forest.variant-5 .terrainTexture {
-  transform: scale(0.8, 1.08) rotate(-3deg);
-  filter: drop-shadow(7px 8px 3px #17241670) brightness(1.08);
+.terrainTreeShadow {
+  position: absolute;
+  left: -13px;
+  top: -4px;
+  width: 28px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(24, 34, 20, 0.3);
+  transform: rotate(-8deg);
+  filter: blur(2px);
+  pointer-events: none;
 }
 
 .terrain-rock {
@@ -1424,13 +1430,7 @@ button:disabled {
   pointer-events: none;
 }
 .terrain-forest .terrainDetail:after {
-  content: "♠";
-  position: absolute;
-  left: 23px;
-  top: 2px;
-  color: #173c2a;
-  font-size: 20px;
-  text-shadow: 8px 4px #244c34;
+  content: "";
 }
 .terrain-rock .terrainDetail:after {
   content: "◆";

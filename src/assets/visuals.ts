@@ -1,12 +1,45 @@
+import fir01 from "./trees/fir-01.svg";
+import pine01 from "./trees/pine-01.svg";
+import pine02 from "./trees/pine-02.svg";
+import youngPine01 from "./trees/young-pine-01.svg";
+
 /** Visual-only definitions. Nothing in this module affects placement or economy. */
 export const TERRAIN_VARIANTS = [0, 1, 2, 3, 4, 5] as const;
 export const TREE_VARIANTS = [
-  { crown: "round", scale: 0.92, tone: "pine" },
-  { crown: "wide", scale: 1.04, tone: "moss" },
-  { crown: "tall", scale: 1.1, tone: "fir" },
-  { crown: "split", scale: 0.96, tone: "fern" },
-  { crown: "young", scale: 0.84, tone: "sage" },
+  {
+    id: "pine-01",
+    src: pine01,
+    baseWidth: 72,
+    scale: 1,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  {
+    id: "pine-02",
+    src: pine02,
+    baseWidth: 78,
+    scale: 0.96,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  {
+    id: "fir-01",
+    src: fir01,
+    baseWidth: 82,
+    scale: 1.04,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  {
+    id: "young-pine-01",
+    src: youngPine01,
+    baseWidth: 58,
+    scale: 0.88,
+    offsetX: 0,
+    offsetY: 0,
+  },
 ] as const;
+export type TreeVariant = (typeof TREE_VARIANTS)[number];
 export const ROCK_VARIANTS = [
   { scale: 0.78, rotation: -8, tone: "warm" },
   { scale: 0.95, rotation: 5, tone: "slate" },
