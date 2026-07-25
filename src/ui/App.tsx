@@ -13,6 +13,7 @@ import {
   canAfford,
   canPlace,
   demographics,
+  hasRequiredWorkers,
   occupied,
   roadConnected,
 } from "../domain/rules";
@@ -170,19 +171,27 @@ function Header({ demo }: { demo: ReturnType<typeof demographics> }) {
             <small>{name}</small>
           </div>
         ))}
-        <div title="Využitá a celková populace">
-          <span>👥</span>
-          <b>
-            {demo.used}/{demo.total}
-          </b>
-          <small>Populace</small>
-        </div>
         <div title={`Násobitel produkce ${demo.multiplier}×`}>
           <span>😊</span>
           <b>{demo.happiness}%</b>
           <small>Spokojenost</small>
         </div>
       </div>
+      <section className="populationPanel" aria-label={cs.population}>
+        <strong>👥 {cs.population}</strong>
+        <span title={cs.totalPopulation}>
+          {cs.totalPopulation}:{" "}
+          <b data-testid="population-total">{s.population.total}</b>
+        </span>
+        <span title={cs.availableWorkers}>
+          {cs.availableWorkers}:{" "}
+          <b data-testid="workers-available">{s.population.availableWorkers}</b>
+        </span>
+        <span title={cs.employedWorkers}>
+          {cs.employedWorkers}:{" "}
+          <b data-testid="workers-employed">{s.population.employedWorkers}</b>
+        </span>
+      </section>
       <div className="era">
         Epocha {s.epoch === 1 ? "osadníků" : "prvních měst"}
       </div>
@@ -377,7 +386,10 @@ function CityBuilding({ b }: { b: Building }) {
     a = s.actions,
     d = getBuilding(b.type),
     connected = roadConnected(b, s.buildings),
-    done = !!b.production && Date.now() >= b.production.endsAt;
+    done = !!b.production && Date.now() >= b.production.endsAt,
+    active = hasRequiredWorkers(b, s.population),
+    assigned = s.population.workerAssignments[b.id] ?? 0,
+    required = d.workerCost ?? 0;
   return (
     <button
       data-testid={`building-${b.type}`}
@@ -385,7 +397,7 @@ function CityBuilding({ b }: { b: Building }) {
         e.stopPropagation();
         a.select(b.id);
       }}
-      className={`cityBuilding ${b.type === "road" ? "roadBuilding" : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""}`}
+      className={`cityBuilding ${b.type === "road" ? "roadBuilding" : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""} ${active ? "" : "inactive"}`}
       style={{
         left: 600 + (b.x - b.y) * 32,
         top: 50 + (b.x + b.y) * 16 - (b.type === "road" ? 0 : d.h * 7),
@@ -393,10 +405,20 @@ function CityBuilding({ b }: { b: Building }) {
         zIndex: 100 + b.x + b.y,
         background: `linear-gradient(145deg,${d.color},#263846)`,
       }}
-      title={d.name}
+      title={active ? d.name : cs.notEnoughWorkers}
     >
       <span className="roof">{d.icon}</span>
       <b>{d.name}</b>
+      {required > 0 && (
+        <small>
+          {cs.workers}: {assigned} / {required}
+        </small>
+      )}
+      {!active && (
+        <em className="workerWarning" title={cs.notEnoughWorkers}>
+          ⚠
+        </em>
+      )}
       {d.requiresRoad && !connected && (
         <em title="Budova není spojena s radnicí">!</em>
       )}
@@ -409,6 +431,9 @@ function Detail({ b }: { b: Building }) {
     a = s.actions,
     d = getBuilding(b.type),
     connected = roadConnected(b, s.buildings),
+    assigned = s.population.workerAssignments[b.id] ?? 0,
+    required = d.workerCost ?? 0,
+    active = hasRequiredWorkers(b, s.population),
     remaining = b.production
       ? Math.max(0, Math.ceil((b.production.endsAt - Date.now()) / 1000))
       : 0;
@@ -437,10 +462,12 @@ function Detail({ b }: { b: Building }) {
             {connected ? "✓ Spojeno" : "⚠ Chybí cesta"}
           </dd>
         </div>
-        {d.workers && (
+        {required > 0 && (
           <div>
-            <dt>Pracovníci</dt>
-            <dd>{d.workers}</dd>
+            <dt>{cs.workers}</dt>
+            <dd className={active ? "ok" : "bad"}>
+              {assigned} / {required}
+            </dd>
           </div>
         )}
       </dl>
@@ -449,7 +476,11 @@ function Detail({ b }: { b: Building }) {
           {remaining ? `Hotovo za ${remaining} s` : "✨ Vybrat produkci"}
         </button>
       ) : d.category === "residential" || d.output ? (
-        <button onClick={() => a.startProduction(b.id, d.output?.seconds)}>
+        <button
+          disabled={!active}
+          title={active ? undefined : cs.notEnoughWorkers}
+          onClick={() => a.startProduction(b.id, d.output?.seconds)}
+        >
           Zahájit produkci
         </button>
       ) : (
@@ -457,13 +488,25 @@ function Detail({ b }: { b: Building }) {
         b.type !== "statue" &&
         b.type !== "square" && (
           <div className="productionChoices">
-            <button onClick={() => a.startProduction(b.id, 30)}>
+            <button
+              disabled={!active}
+              title={active ? undefined : cs.notEnoughWorkers}
+              onClick={() => a.startProduction(b.id, 30)}
+            >
               30 s · 30
             </button>
-            <button onClick={() => a.startProduction(b.id, 120)}>
+            <button
+              disabled={!active}
+              title={active ? undefined : cs.notEnoughWorkers}
+              onClick={() => a.startProduction(b.id, 120)}
+            >
               2 min · 105
             </button>
-            <button onClick={() => a.startProduction(b.id, 300)}>
+            <button
+              disabled={!active}
+              title={active ? undefined : cs.notEnoughWorkers}
+              onClick={() => a.startProduction(b.id, 300)}
+            >
               5 min · 230
             </button>
           </div>

@@ -1,5 +1,12 @@
 import { getBuilding, technologies } from "../data/content";
-import type { Building, Cost, GameData, Resources, Unit } from "../types";
+import type {
+  Building,
+  Cost,
+  GameData,
+  PopulationState,
+  Resources,
+  Unit,
+} from "../types";
 import { isBuildableTerrain, MAP_SIZE, terrain, terrainAt } from "./terrain";
 import type { TerrainTile } from "./terrain";
 import { buildingProduction } from "../data/production";
@@ -88,12 +95,44 @@ export function demographics(buildings: Building[]) {
     happy = 0;
   for (const b of buildings) {
     const d = getBuilding(b.type);
-    total += d.population ?? 0;
-    used += d.workers ?? 0;
+    total += d.populationProvided ?? 0;
+    used += d.workerCost ?? 0;
     happy += d.happiness ?? 0;
   }
   const happiness = Math.round(Math.min(150, 100 + (happy - used * 2)));
   return { total, used, happiness, multiplier: happinessMultiplier(happiness) };
+}
+export function assignWorkforce(buildings: Building[]): PopulationState {
+  const total = buildings.reduce(
+    (sum, building) =>
+      sum + (getBuilding(building.type).populationProvided ?? 0),
+    0,
+  );
+  let availableWorkers = total;
+  const workerAssignments: Record<string, number> = {};
+  for (const building of buildings) {
+    const required = getBuilding(building.type).workerCost ?? 0;
+    if (required === 0) continue;
+    const assigned = Math.min(required, availableWorkers);
+    workerAssignments[building.id] = assigned;
+    availableWorkers -= assigned;
+  }
+  return {
+    total,
+    availableWorkers,
+    employedWorkers: total - availableWorkers,
+    workerAssignments,
+    happiness: 100,
+    education: 0,
+    professions: {},
+  };
+}
+export function hasRequiredWorkers(
+  building: Building,
+  population: Pick<PopulationState, "workerAssignments">,
+) {
+  const required = getBuilding(building.type).workerCost ?? 0;
+  return (population.workerAssignments[building.id] ?? 0) >= required;
 }
 export const canAfford = (r: Resources, c: Cost) =>
   Object.entries(c).every(([k, v]) => r[k as keyof Resources] >= (v ?? 0));
@@ -108,10 +147,12 @@ export function produceResources(
   buildings: Building[],
   seconds: number,
   now = Date.now(),
+  population = assignWorkforce(buildings),
 ) {
   const next = { ...resources };
   for (const building of buildings) {
     if (building.readyAt && building.readyAt > now) continue;
+    if (!hasRequiredWorkers(building, population)) continue;
     const rates = buildingProduction[building.type];
     if (!rates) continue;
     for (const [resource, rate] of Object.entries(rates))
@@ -156,9 +197,17 @@ export function serialize(data: GameData) {
 export function deserialize(raw: string): GameData | null {
   try {
     const d = JSON.parse(raw) as Partial<GameData>;
-    if (d.version !== 2 || !d.resources || !Array.isArray(d.buildings))
+    if (
+      ![2, 3].includes(d.version ?? 0) ||
+      !d.resources ||
+      !Array.isArray(d.buildings)
+    )
       return null;
-    return d as GameData;
+    return {
+      ...(d as Omit<GameData, "version" | "population">),
+      version: 3,
+      population: assignWorkforce(d.buildings),
+    };
   } catch {
     return null;
   }
@@ -175,11 +224,13 @@ export function freshGame(name = "Nová naděje"): GameData {
     { id: "road3", type: "road", x: 10, y: 11 },
     { id: "road4", type: "road", x: 11, y: 11 },
     { id: "road5", type: "road", x: 12, y: 11 },
+    { id: "road6", type: "road", x: 12, y: 10 },
+    { id: "road7", type: "road", x: 12, y: 9 },
     { id: "statue1", type: "statue", x: 7, y: 5 },
-    { id: "statue2", type: "statue", x: 12, y: 10 },
+    { id: "statue2", type: "statue", x: 13, y: 10 },
   ];
   return {
-    version: 2,
+    version: 3,
     cityName: name,
     resources: {
       gold: 1000,
@@ -189,6 +240,7 @@ export function freshGame(name = "Nová naděje"): GameData {
       research: 3,
     },
     buildings: starter,
+    population: assignWorkforce(starter),
     researched: [],
     epoch: 1,
     units: [{ id: "starter-scout", type: "scout", hp: 34 }],

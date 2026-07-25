@@ -16,8 +16,8 @@ export interface BuildingDef {
   w: number;
   h: number;
   cost: Cost;
-  population?: number;
-  workers?: number;
+  populationProvided?: number;
+  workerCost?: number;
   happiness?: number;
   requiresRoad?: boolean;
   epoch: 1 | 2;
@@ -44,6 +44,16 @@ export interface Resources {
   wood: number;
   stone: number;
   research: number;
+}
+export interface PopulationState {
+  total: number;
+  availableWorkers: number;
+  employedWorkers: number;
+  workerAssignments: Record<string, number>;
+  /** Reserved for later population simulations without coupling them to rendering. */
+  happiness: number;
+  education: number;
+  professions: Record<string, number>;
 }
 export interface UnitDef {
   id: string;
@@ -95,10 +105,11 @@ export interface Quest {
 }
 export type View = "city" | "tech" | "world" | "army" | "quests";
 export interface GameData {
-  version: 2;
+  version: 3;
   cityName: string;
   resources: Resources;
   buildings: Building[];
+  population: PopulationState;
   researched: string[];
   epoch: 1 | 2;
   units: Unit[];

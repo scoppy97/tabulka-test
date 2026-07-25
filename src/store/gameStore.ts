@@ -8,12 +8,14 @@ import {
 } from "../data/content";
 import {
   applyCost,
+  assignWorkforce,
   canAfford,
   canPlace,
   demographics,
   deserialize,
   eraReady,
   freshGame,
+  hasRequiredWorkers,
   productionReady,
   produceResources,
   roadConnected,
@@ -83,8 +85,7 @@ export const useGame = create<Store>((set, get) => ({
     placeMode: (placing) => set({ placing, view: "city" }),
     place: (type, x, y) => {
       const s = get(),
-        d = getBuilding(type),
-        demo = demographics(s.buildings);
+        d = getBuilding(type);
       if (type === "townhall" && s.buildings.some((b) => b.type === type)) {
         set({ notice: "Radnice je zdarma pouze jako počáteční budova." });
         return false;
@@ -93,12 +94,8 @@ export const useGame = create<Store>((set, get) => ({
         set({ notice: "Na tomto místě nelze stavět." });
         return false;
       }
-      if (
-        d.epoch > s.epoch ||
-        !canAfford(s.resources, d.cost) ||
-        demo.total - demo.used < (d.workers ?? 0)
-      ) {
-        set({ notice: "Nedostatek zdrojů nebo volné populace." });
+      if (d.epoch > s.epoch || !canAfford(s.resources, d.cost)) {
+        set({ notice: "Nedostatek zdrojů." });
         return false;
       }
       const b: Building = {
@@ -108,9 +105,11 @@ export const useGame = create<Store>((set, get) => ({
         y,
         readyAt: Date.now() + 1500,
       };
+      const buildings = [...s.buildings, b];
       set({
         resources: applyCost(s.resources, d.cost),
-        buildings: [...s.buildings, b],
+        buildings,
+        population: assignWorkforce(buildings),
         selected: b.id,
         placing: undefined,
         notice: `${d.name}: stavba zahájena.`,
@@ -145,8 +144,15 @@ export const useGame = create<Store>((set, get) => ({
         set({ notice: "Radnici nelze zbourat." });
         return;
       }
+      const buildings = s.buildings.filter((v) => v.id !== id);
+      const population = assignWorkforce(buildings);
       set({
-        buildings: s.buildings.filter((v) => v.id !== id),
+        buildings: buildings.map((building) =>
+          hasRequiredWorkers(building, population)
+            ? building
+            : { ...building, production: undefined },
+        ),
+        population,
         selected: undefined,
         notice: "Budova zbourána.",
       });
@@ -157,6 +163,10 @@ export const useGame = create<Store>((set, get) => ({
         b = s.buildings.find((v) => v.id === id);
       if (!b) return;
       const d = getBuilding(b.type);
+      if (!hasRequiredWorkers(b, s.population)) {
+        set({ notice: "Nedostatek pracovníků." });
+        return;
+      }
       if (d.requiresRoad && !roadConnected(b, s.buildings)) {
         set({ notice: "Budova není spojena s radnicí." });
         return;
@@ -192,6 +202,10 @@ export const useGame = create<Store>((set, get) => ({
     collect: (id) => {
       const s = get(),
         b = s.buildings.find((v) => v.id === id);
+      if (b && !hasRequiredWorkers(b, s.population)) {
+        set({ notice: "Nedostatek pracovníků." });
+        return;
+      }
       if (!b?.production || !productionReady(b.production.endsAt)) {
         set({ notice: "Produkce ještě není dokončena." });
         return;
@@ -268,7 +282,13 @@ export const useGame = create<Store>((set, get) => ({
       if (elapsed > 0) {
         patch = {
           ...patch,
-          resources: produceResources(s.resources, s.buildings, elapsed, now),
+          resources: produceResources(
+            s.resources,
+            s.buildings,
+            elapsed,
+            now,
+            s.population,
+          ),
           lastResourceAt: s.lastResourceAt + elapsed * 1000,
         };
       }
