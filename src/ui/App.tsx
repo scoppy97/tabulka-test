@@ -29,6 +29,8 @@ import { cs } from "../i18n";
 import { formatCost, resourceDefinitions } from "../data/resources";
 import { useGame } from "../store/gameStore";
 import type { Building, Unit, View } from "../types";
+import { BuildingVisual } from "./BuildingVisual";
+import { BUILDING_VISUALS, hasBuildingVisual } from "./buildingVisualConfig";
 export class ErrorBoundary extends React.Component<
   React.PropsWithChildren,
   { bad: boolean }
@@ -431,6 +433,14 @@ function City() {
             .map((b) => (
               <CityBuilding key={b.id} b={b} />
             ))}
+          {s.placing && hovered && hasBuildingVisual(s.placing) && (
+            <BuildingPreview
+              type={s.placing}
+              x={hovered.x}
+              y={hovered.y}
+              valid={footprint.get(`${hovered.x},${hovered.y}`) === true}
+            />
+          )}
         </div>
         <div className="cameraHelp">
           WASD / okraj obrazovky: pohyb · kolečko: plynulý zoom · pravé
@@ -439,6 +449,33 @@ function City() {
       </section>
       {selected && <Detail b={selected} />}
     </>
+  );
+}
+function BuildingPreview({
+  type,
+  x,
+  y,
+  valid,
+}: {
+  type: keyof typeof BUILDING_VISUALS;
+  x: number;
+  y: number;
+  valid: boolean;
+}) {
+  const d = getBuilding(type);
+  return (
+    <span
+      className={`buildingPreview ${valid ? "valid" : "invalid"}`}
+      style={{
+        left: 600 + (x - y) * 32,
+        top: 50 + (x + y) * 16 - d.h * 7 - BUILDING_VISUALS[type].lift,
+        width: BUILDING_VISUALS[type].width,
+        zIndex: 120 + x + y,
+      }}
+      aria-hidden="true"
+    >
+      <BuildingVisual type={type} />
+    </span>
   );
 }
 function CityBuilding({ b }: { b: Building }) {
@@ -459,17 +496,29 @@ function CityBuilding({ b }: { b: Building }) {
         e.stopPropagation();
         a.select(b.id);
       }}
-      className={`cityBuilding ${b.type === "road" ? `roadBuilding road-${roadVisual}` : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""} ${active ? "" : "inactive"}`}
+      className={`cityBuilding ${hasBuildingVisual(b.type) ? "illustratedBuilding" : ""} ${b.type === "road" ? `roadBuilding road-${roadVisual}` : ""} ${s.selected === b.id ? "selected" : ""} ${done ? "ready" : ""} ${active ? "" : "inactive"}`}
       style={{
         left: 600 + (b.x - b.y) * 32,
-        top: 50 + (b.x + b.y) * 16 - (b.type === "road" ? 0 : d.h * 7),
-        width: Math.max(48, (d.w + d.h) * 27),
+        top:
+          50 +
+          (b.x + b.y) * 16 -
+          (b.type === "road" ? 0 : d.h * 7) -
+          (hasBuildingVisual(b.type) ? BUILDING_VISUALS[b.type].lift : 0),
+        width: hasBuildingVisual(b.type)
+          ? BUILDING_VISUALS[b.type].width
+          : Math.max(48, (d.w + d.h) * 27),
         zIndex: 100 + b.x + b.y,
-        background: `linear-gradient(145deg,${d.color},#263846)`,
+        background: hasBuildingVisual(b.type)
+          ? undefined
+          : `linear-gradient(145deg,${d.color},#263846)`,
       }}
       title={active ? d.name : cs.notEnoughWorkers}
     >
-      <span className="roof">{d.icon}</span>
+      {hasBuildingVisual(b.type) ? (
+        <BuildingVisual type={b.type} />
+      ) : (
+        <span className="roof">{d.icon}</span>
+      )}
       <b>{d.name}</b>
       {required > 0 && (
         <small>

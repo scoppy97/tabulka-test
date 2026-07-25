@@ -592,6 +592,71 @@ button:disabled {
   outline: 3px solid #f2c15c;
   filter: brightness(1.25);
 }
+.cityBuilding.illustratedBuilding {
+  min-height: 0;
+  height: 130px;
+  padding: 0;
+  transform: translate(-50%, -70%);
+  overflow: visible;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.cityBuilding.illustratedBuilding::before {
+  display: none;
+}
+.buildingAsset {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: var(--building-art-width);
+  max-width: none;
+  height: auto;
+  transform: translateX(-50%);
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(2px 3px 1px #17231955);
+}
+.buildingAssetShadow {
+  fill: #1c281f66;
+  filter: blur(3px);
+}
+.illustratedBuilding > b {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: -3px;
+  transform: translateX(-50%);
+}
+.illustratedBuilding > small {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: -16px;
+  transform: translateX(-50%);
+}
+.cityBuilding.illustratedBuilding.selected {
+  outline: none;
+  filter: brightness(1.08) drop-shadow(0 0 7px #ffd66c);
+}
+.cityBuilding.illustratedBuilding.selected .buildingAsset {
+  filter: drop-shadow(0 0 3px #fff1a7) drop-shadow(0 0 8px #e8aa35);
+}
+.buildingPreview {
+  position: absolute;
+  height: 130px;
+  transform: translate(-50%, -70%);
+  pointer-events: none;
+  opacity: 0.72;
+}
+.buildingPreview.valid {
+  filter: drop-shadow(0 0 7px #67f09a);
+}
+.buildingPreview.invalid {
+  filter: grayscale(0.25) sepia(0.25) hue-rotate(305deg)
+    drop-shadow(0 0 8px #f04d46);
+  opacity: 0.62;
+}
 @keyframes pulse {
   50% {
     transform: scale(1.18);
