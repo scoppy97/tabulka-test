@@ -1,10 +1,1041 @@
-:root{font-family:Inter,system-ui,sans-serif;color:#f4ead7;background:#101923;font-synthesis:none}*{box-sizing:border-box}body{margin:0;overflow:hidden}button,select,textarea{font:inherit}button{cursor:pointer;color:inherit;background:#263846;border:1px solid #536674;border-radius:8px;padding:9px 14px;transition:.18s}button:hover:not(:disabled),button:focus-visible{filter:brightness(1.2);border-color:#d8aa5f;transform:translateY(-1px);outline:2px solid #d8aa5f55}button:disabled{opacity:.45;cursor:not-allowed}.app{height:100vh;background:#15222d}.app>header{position:fixed;z-index:20;inset:0 0 auto 0;height:72px;background:linear-gradient(180deg,#233441,#162530);display:flex;align-items:center;padding:0 14px;box-shadow:0 4px 18px #0009;border-bottom:1px solid #916c3e}.brand{display:flex;align-items:center;width:255px;gap:10px}.brand i{font-family:Cinzel;background:linear-gradient(145deg,#ddaf66,#6f4927);border:2px solid #efd398;border-radius:50%;width:45px;height:45px;display:grid;place-items:center}.brand div{display:flex;flex-direction:column}.brand strong{font:600 16px Cinzel}.brand small{color:#b8c1c6}.resources{display:flex;flex:1;justify-content:center;height:52px}.resources>div{min-width:86px;padding:5px 9px;display:grid;grid-template-columns:25px 1fr;grid-template-rows:23px 14px;border-right:1px solid #ffffff16}.resources span{grid-row:1/3;font-size:18px;align-self:center}.resources b{font-size:15px}.resources small{font-size:10px;color:#aab7bf}.era{color:#e2b86f;font:600 13px Cinzel;padding:10px}.gear{font-size:19px}.nav{position:fixed;z-index:18;top:72px;bottom:0;left:0;width:86px;background:#172631dd;border-right:1px solid #536674;display:flex;flex-direction:column;padding-top:18px;gap:8px}.nav button{background:transparent;border:0;border-radius:0;display:flex;flex-direction:column;align-items:center;padding:12px 3px;color:#aebbc3;border-left:3px solid transparent}.nav button span{font-size:24px}.nav button small{font-size:10px;margin-top:4px}.nav button.active{color:#f4d498;background:#bd873323;border-left-color:#e7b65d}.stage{position:fixed;inset:72px 0 0 86px}.cityViewport{position:absolute;inset:0 0 174px 0;overflow:hidden;background:linear-gradient(#5f8993 0 28%,#76935d 29%);touch-action:none}.sky span{position:absolute;width:240px;height:35px;background:#eaf5ee55;border-radius:50%;filter:blur(8px);animation:cloud 18s linear infinite}.sky span:nth-child(2){top:14%;animation-delay:-8s}.sky span:nth-child(3){top:23%;animation-delay:-3s}@keyframes cloud{from{left:-250px}to{left:110%}}.iso{position:absolute;left:50%;top:25%;width:1px;height:1px;transform-origin:600px 300px}.tile{position:absolute;width:64px;height:32px;padding:0;border:1px solid #d4e19b33;border-radius:0;background:#719253;transform:rotate(0);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}.tile:nth-child(7n){background:#789b59}.tile.placing:hover{background:#63d674}.cityBuilding{position:absolute;min-height:55px;transform:translate(-50%,-35%);z-index:3;padding:4px;border:0;border-radius:50% 50% 10px 10px;box-shadow:0 12px 5px #16291866;display:flex;flex-direction:column;align-items:center;justify-content:center}.cityBuilding .roof{font-size:27px;filter:drop-shadow(0 3px 1px #0007)}.cityBuilding b{font-size:9px;background:#16232ddd;padding:2px 5px;border-radius:5px;white-space:nowrap}.cityBuilding em,.cityBuilding i{position:absolute;right:0;top:-5px;border-radius:50%;width:22px;height:22px;background:#c74b3e;display:grid;place-items:center;font-style:normal}.cityBuilding i{background:#e4b94d;color:#172631;animation:pulse 1s infinite}.cityBuilding.selected{outline:3px solid #f2c15c;filter:brightness(1.25)}@keyframes pulse{50%{transform:scale(1.18);box-shadow:0 0 16px #ffd85c}}.cameraHelp{position:absolute;left:15px;bottom:15px;background:#15222dcc;padding:7px 10px;border-radius:7px;font-size:11px}.panel{background:linear-gradient(145deg,#213440f2,#172630f5);border:1px solid #627381;border-radius:12px;box-shadow:0 12px 30px #0008}.detail{position:absolute;z-index:12;right:15px;top:15px;width:280px;padding:22px}.close{position:absolute;right:10px;top:10px;border:0;background:transparent;font-size:22px;padding:4px 9px}.bigIcon{font-size:46px}.detail h2{font:600 21px Cinzel;color:#e9c27d}.detail p{font-size:12px;color:#b8c3ca}.detail dl>div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #ffffff16;font-size:12px}.detail dd{margin:0}.ok{color:#8fd185}.bad{color:#ff8e78}.detail>button,.productionChoices button{width:100%;margin-top:8px}.danger{background:#6d2e2e!important;border-color:#aa5757!important}.buildbar{position:fixed;z-index:15;left:86px;right:0;bottom:0;height:174px;background:linear-gradient(#263b48f8,#13232dfd);border-top:2px solid #886536;padding:7px 12px}.buildbar nav{display:flex;gap:4px}.buildbar nav button{padding:5px 12px;font-size:11px;border-radius:6px 6px 0 0;background:transparent}.buildbar nav button.active{background:#a57535;color:#fff4d8}.cards{display:flex;gap:9px;overflow-x:auto;padding:8px}.cards>button{width:275px;min-width:240px;height:106px;text-align:left;display:flex;gap:10px;padding:8px}.cards>button.chosen{outline:2px solid #f0c46f}.cards i{font-style:normal;font-size:28px;min-width:62px;display:grid;place-items:center;border-radius:8px}.cards span{display:flex;flex-direction:column;gap:4px}.cards b{color:#f0ce91}.cards small{font-size:10px;color:#bfc8cc}.toast{position:fixed;z-index:60;top:83px;left:50%;transform:translateX(-50%);background:#253a46;border:1px solid #d5aa63;padding:10px 20px;border-radius:8px;box-shadow:0 8px 24px #0008;animation:appear .3s}.screen{height:100%;overflow:auto;padding:30px;background:radial-gradient(circle at 70% 20%,#2f4854,#14232e 60%)}.screenTitle{display:flex;align-items:center;gap:15px;border-bottom:1px solid #ffffff20;padding-bottom:15px;margin-bottom:25px}.screenTitle>span{font-size:38px}.screenTitle h1{font:700 27px Cinzel;margin:0;color:#ecc67f}.screenTitle p{margin:4px 0;color:#9fb0ba}.screenTitle>b{margin-left:auto;font-size:22px}.techTree{display:grid;grid-template-columns:repeat(6,minmax(145px,1fr));grid-template-rows:repeat(2,220px);gap:30px;position:relative;padding:20px}.techTree article{border:1px solid #526572;border-radius:13px;background:#1c2c36;padding:15px;position:relative}.techTree article.available{border-color:#d7a84e;box-shadow:0 0 22px #c78e3044}.techTree article.done{border-color:#659e72;background:#203b37}.techTree article>span{font-size:28px}.techTree h3{font-family:Cinzel;color:#e5c280}.techTree p{font-size:12px;color:#b6c2c8}.techTree button{position:absolute;bottom:12px;left:12px;right:12px;background:#9a6c31}.eraAdvance{display:block;margin:15px auto;background:#9b6b2e;font:600 16px Cinzel}.world{position:relative;padding-right:325px}.worldMap{height:70vh;position:relative;border:2px solid #826e4d;border-radius:45% 35% 40% 30%;background:radial-gradient(circle at 30% 50%,#798a52,#45634d 55%,#1f4854 56%);overflow:hidden;box-shadow:inset 0 0 50px #122631}.river{position:absolute;width:120%;height:45px;top:48%;left:-10%;background:#4f8994;transform:rotate(-8deg);box-shadow:0 0 0 5px #c4b77944}.worldMap button{position:absolute;transform:translate(-50%,-50%);border:0;background:transparent;display:flex;flex-direction:column;text-shadow:0 2px 3px #000}.worldMap button i{font-size:30px;border-radius:50%;background:#30434a;padding:9px;font-style:normal}.worldMap button.available i{animation:pulse 1.5s infinite;background:#9a6a31}.worldMap button.owned i{background:#457d54}.worldMap button.selected i{outline:3px solid #f3d28b}.worldMap button small{font-size:9px}.worldDetail{position:absolute;right:20px;top:110px;width:290px;padding:20px}.worldDetail h2{font-family:Cinzel;color:#e9c47e}.worldDetail button{width:100%;background:#8a602d}.enemyList{display:flex;flex-direction:column;font-size:12px}.armyGrid{display:grid;grid-template-columns:1fr 1.5fr;gap:20px}.roster,.recruit{padding:20px}.unit,.recruit article{display:flex;align-items:center;gap:14px;border-bottom:1px solid #ffffff18;padding:12px}.unit i,.recruit i{font-size:35px;font-style:normal}.unit span{display:flex;flex-direction:column}.unit small{color:#aab9c1}.recruit article div{flex:1}.recruit h3,.recruit p{margin:3px}.training{background:#8b6932;padding:12px;border-radius:8px;margin-bottom:15px}.questList{max-width:850px;margin:auto}.questList article{display:grid;grid-template-columns:50px 1fr 110px;align-items:center;background:#1e303b;border:1px solid #536672;padding:15px;margin:10px;border-radius:12px}.questList article>i{font:700 24px Cinzel;background:#354955;border-radius:50%;width:38px;height:38px;display:grid;place-items:center}.questList h3,.questList p{margin:3px}.questList p,.questList small{color:#aab8c0}.questList .complete{border-color:#d9a953;box-shadow:0 0 15px #c58b2e33}.questList .claimed{opacity:.65}.progress{height:5px;background:#101a20;margin:8px 0}.progress span{display:block;height:100%;background:#d6a64f}.tutorial{position:fixed;z-index:50;left:105px;bottom:190px;width:320px;padding:18px;background:#f2e4c5;color:#25333a;border:3px solid #b88845;border-radius:12px;box-shadow:0 15px 40px #000b}.tutorial:after{content:'';position:absolute;bottom:-17px;left:45px;border:8px solid transparent;border-top-color:#b88845}.tutorial>span{font-size:10px;color:#855e30;font-weight:bold}.tutorial h3{font:700 18px Cinzel;margin:8px 0}.tutorial p{font-size:13px}.tutorial div{display:flex;justify-content:space-between}.tutorial button{background:#7d572b}.tutorial .ghost{background:transparent;color:#37444a;border:0}.modalShade{position:fixed;z-index:80;inset:0;background:#071015cc;display:grid;place-items:center}.modal{position:relative;width:min(480px,90vw);max-height:90vh;overflow:auto;background:linear-gradient(#2b404c,#172630);border:2px solid #ab8147;border-radius:14px;padding:25px;display:flex;flex-direction:column;gap:12px}.modal h2{font-family:Cinzel;color:#e8c27d}.modal label{display:flex;justify-content:space-between;gap:10px}.modal textarea{height:70px;background:#101c24;color:#eee}.celebration{text-align:center;align-items:center}.celebration>b{color:#eac46f;letter-spacing:4px}.battleOverlay{position:fixed;z-index:100;inset:0;background:#071017ee;padding:3vh 4vw}.battle{height:94vh;background:#182832;border:2px solid #9f7845;border-radius:15px;display:grid;grid-template-columns:1fr 260px;grid-template-rows:70px 1fr 60px;overflow:hidden;position:relative}.battle>header{grid-column:1/3;position:static;background:#243a46;display:flex;justify-content:space-between;padding:12px 20px}.battle h2{margin:0;font-family:Cinzel;color:#ecc982}.battlefield{position:relative;margin:15px;background:#354e43;border-radius:8px}.battleTile{position:absolute;width:12.5%;height:16.66%;border:1px solid #a8c08425;background:#7c8c5b55}.fighter{position:absolute;z-index:2;width:10%;height:14%;padding:2px;background:#284e70;border:2px solid #6fa5c9}.fighter.enemy{background:#743d3d;border-color:#cb7770}.fighter.active{box-shadow:0 0 20px #ffd55b;transform:scale(1.08)}.fighter.target{animation:pulse 1s infinite}.fighter i{font-style:normal;font-size:24px}.fighter b{position:absolute;bottom:0;right:2px;font-size:10px}.battle>aside{padding:12px;background:#12202a;overflow:auto}.battle>aside p{font-size:11px;border-bottom:1px solid #ffffff14;padding-bottom:6px}.battle>footer{grid-column:1/3;display:flex;justify-content:center;padding:8px;background:#223641}.result{position:absolute;inset:20% 30%;background:#253b46;border:2px solid #d7aa57;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 80px #000}.debug{position:fixed;z-index:200;right:10px;bottom:10px;background:#18151e;border:1px solid #ee47dc;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:11px}.fatal{padding:50px}.fatal h1{font-family:Cinzel}@keyframes appear{from{opacity:0;transform:translate(-50%,-10px)}}
-@media(max-width:1350px){.brand{width:180px}.brand strong{font-size:12px}.resources>div{min-width:67px}.resources small{display:none}.era{display:none}.techTree{grid-template-columns:repeat(6,130px);overflow-x:auto}.world{padding-right:270px}.worldDetail{width:250px}.buildbar{height:160px}.cityViewport{bottom:160px}}
-@media(max-width:900px){.resources>div:nth-child(n+5){display:none}.nav{width:64px}.stage,.buildbar{left:64px}.brand{width:150px}.armyGrid{grid-template-columns:1fr}.detail{width:240px}.world{padding:20px}.worldDetail{position:relative;top:auto;right:auto;width:100%;margin-top:10px}.worldMap{height:45vh}}
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #f4ead7;
+  background: #101923;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+}
+button,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  color: inherit;
+  background: #263846;
+  border: 1px solid #536674;
+  border-radius: 8px;
+  padding: 9px 14px;
+  transition: 0.18s;
+}
+button:hover:not(:disabled),
+button:focus-visible {
+  filter: brightness(1.2);
+  border-color: #d8aa5f;
+  transform: translateY(-1px);
+  outline: 2px solid #d8aa5f55;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.app {
+  height: 100vh;
+  background: #15222d;
+}
+.app > header {
+  position: fixed;
+  z-index: 20;
+  inset: 0 0 auto 0;
+  height: 72px;
+  background: linear-gradient(180deg, #233441, #162530);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  box-shadow: 0 4px 18px #0009;
+  border-bottom: 1px solid #916c3e;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  width: 255px;
+  gap: 10px;
+}
+.brand i {
+  font-family: Cinzel;
+  background: linear-gradient(145deg, #ddaf66, #6f4927);
+  border: 2px solid #efd398;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+}
+.brand div {
+  display: flex;
+  flex-direction: column;
+}
+.brand strong {
+  font: 600 16px Cinzel;
+}
+.brand small {
+  color: #b8c1c6;
+}
+.resources {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  height: 52px;
+}
+.resources > div {
+  min-width: 86px;
+  padding: 5px 9px;
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  grid-template-rows: 23px 14px;
+  border-right: 1px solid #ffffff16;
+}
+.resources span {
+  grid-row: 1/3;
+  font-size: 18px;
+  align-self: center;
+}
+.resources b {
+  font-size: 15px;
+}
+.resources small {
+  font-size: 10px;
+  color: #aab7bf;
+}
+.era {
+  color: #e2b86f;
+  font: 600 13px Cinzel;
+  padding: 10px;
+}
+.gear {
+  font-size: 19px;
+}
+.nav {
+  position: fixed;
+  z-index: 18;
+  top: 72px;
+  bottom: 0;
+  left: 0;
+  width: 86px;
+  background: #172631dd;
+  border-right: 1px solid #536674;
+  display: flex;
+  flex-direction: column;
+  padding-top: 18px;
+  gap: 8px;
+}
+.nav button {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 3px;
+  color: #aebbc3;
+  border-left: 3px solid transparent;
+}
+.nav button span {
+  font-size: 24px;
+}
+.nav button small {
+  font-size: 10px;
+  margin-top: 4px;
+}
+.nav button.active {
+  color: #f4d498;
+  background: #bd873323;
+  border-left-color: #e7b65d;
+}
+.stage {
+  position: fixed;
+  inset: 72px 0 0 86px;
+}
+.cityViewport {
+  position: absolute;
+  inset: 0 0 174px 0;
+  overflow: hidden;
+  background: linear-gradient(#5f8993 0 28%, #76935d 29%);
+  touch-action: none;
+}
+.sky span {
+  position: absolute;
+  width: 240px;
+  height: 35px;
+  background: #eaf5ee55;
+  border-radius: 50%;
+  filter: blur(8px);
+  animation: cloud 18s linear infinite;
+}
+.sky span:nth-child(2) {
+  top: 14%;
+  animation-delay: -8s;
+}
+.sky span:nth-child(3) {
+  top: 23%;
+  animation-delay: -3s;
+}
+@keyframes cloud {
+  from {
+    left: -250px;
+  }
+  to {
+    left: 110%;
+  }
+}
+.iso {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  width: 1px;
+  height: 1px;
+  transform-origin: 600px 300px;
+}
+.tile {
+  position: absolute;
+  width: 64px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #d4e19b33;
+  border-radius: 0;
+  background: #719253;
+  transform: rotate(0);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.tile:nth-child(7n) {
+  background: #789b59;
+}
+.tile.placing:hover {
+  background: #63d674;
+}
+.cityBuilding {
+  position: absolute;
+  min-height: 55px;
+  transform: translate(-50%, -35%);
+  z-index: 3;
+  padding: 4px;
+  border: 0;
+  border-radius: 50% 50% 10px 10px;
+  box-shadow: 0 12px 5px #16291866;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cityBuilding .roof {
+  font-size: 27px;
+  filter: drop-shadow(0 3px 1px #0007);
+}
+.cityBuilding b {
+  font-size: 9px;
+  background: #16232ddd;
+  padding: 2px 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.cityBuilding em,
+.cityBuilding i {
+  position: absolute;
+  right: 0;
+  top: -5px;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  background: #c74b3e;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+}
+.cityBuilding i {
+  background: #e4b94d;
+  color: #172631;
+  animation: pulse 1s infinite;
+}
+.cityBuilding.selected {
+  outline: 3px solid #f2c15c;
+  filter: brightness(1.25);
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.18);
+    box-shadow: 0 0 16px #ffd85c;
+  }
+}
+.cameraHelp {
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  background: #15222dcc;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+}
+.panel {
+  background: linear-gradient(145deg, #213440f2, #172630f5);
+  border: 1px solid #627381;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px #0008;
+}
+.detail {
+  position: absolute;
+  z-index: 12;
+  right: 15px;
+  top: 15px;
+  width: 280px;
+  padding: 22px;
+}
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 22px;
+  padding: 4px 9px;
+}
+.bigIcon {
+  font-size: 46px;
+}
+.detail h2 {
+  font: 600 21px Cinzel;
+  color: #e9c27d;
+}
+.detail p {
+  font-size: 12px;
+  color: #b8c3ca;
+}
+.detail dl > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid #ffffff16;
+  font-size: 12px;
+}
+.detail dd {
+  margin: 0;
+}
+.ok {
+  color: #8fd185;
+}
+.bad {
+  color: #ff8e78;
+}
+.detail > button,
+.productionChoices button {
+  width: 100%;
+  margin-top: 8px;
+}
+.danger {
+  background: #6d2e2e !important;
+  border-color: #aa5757 !important;
+}
+.buildbar {
+  position: fixed;
+  z-index: 15;
+  left: 86px;
+  right: 0;
+  bottom: 0;
+  height: 174px;
+  background: linear-gradient(#263b48f8, #13232dfd);
+  border-top: 2px solid #886536;
+  padding: 7px 12px;
+}
+.buildbar nav {
+  display: flex;
+  gap: 4px;
+}
+.buildbar nav button {
+  padding: 5px 12px;
+  font-size: 11px;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+}
+.buildbar nav button.active {
+  background: #a57535;
+  color: #fff4d8;
+}
+.cards {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 8px;
+}
+.cards > button {
+  width: 275px;
+  min-width: 240px;
+  height: 106px;
+  text-align: left;
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+}
+.cards > button.chosen {
+  outline: 2px solid #f0c46f;
+}
+.cards i {
+  font-style: normal;
+  font-size: 28px;
+  min-width: 62px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+}
+.cards span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cards b {
+  color: #f0ce91;
+}
+.cards small {
+  font-size: 10px;
+  color: #bfc8cc;
+}
+.toast {
+  position: fixed;
+  z-index: 60;
+  top: 83px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #253a46;
+  border: 1px solid #d5aa63;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #0008;
+  animation: appear 0.3s;
+}
+.screen {
+  height: 100%;
+  overflow: auto;
+  padding: 30px;
+  background: radial-gradient(circle at 70% 20%, #2f4854, #14232e 60%);
+}
+.screenTitle {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #ffffff20;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+.screenTitle > span {
+  font-size: 38px;
+}
+.screenTitle h1 {
+  font: 700 27px Cinzel;
+  margin: 0;
+  color: #ecc67f;
+}
+.screenTitle p {
+  margin: 4px 0;
+  color: #9fb0ba;
+}
+.screenTitle > b {
+  margin-left: auto;
+  font-size: 22px;
+}
+.techTree {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(145px, 1fr));
+  grid-template-rows: repeat(2, 220px);
+  gap: 30px;
+  position: relative;
+  padding: 20px;
+}
+.techTree article {
+  border: 1px solid #526572;
+  border-radius: 13px;
+  background: #1c2c36;
+  padding: 15px;
+  position: relative;
+}
+.techTree article.available {
+  border-color: #d7a84e;
+  box-shadow: 0 0 22px #c78e3044;
+}
+.techTree article.done {
+  border-color: #659e72;
+  background: #203b37;
+}
+.techTree article > span {
+  font-size: 28px;
+}
+.techTree h3 {
+  font-family: Cinzel;
+  color: #e5c280;
+}
+.techTree p {
+  font-size: 12px;
+  color: #b6c2c8;
+}
+.techTree button {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: #9a6c31;
+}
+.eraAdvance {
+  display: block;
+  margin: 15px auto;
+  background: #9b6b2e;
+  font: 600 16px Cinzel;
+}
+.world {
+  position: relative;
+  padding-right: 325px;
+}
+.worldMap {
+  height: 70vh;
+  position: relative;
+  border: 2px solid #826e4d;
+  border-radius: 45% 35% 40% 30%;
+  background: radial-gradient(
+    circle at 30% 50%,
+    #798a52,
+    #45634d 55%,
+    #1f4854 56%
+  );
+  overflow: hidden;
+  box-shadow: inset 0 0 50px #122631;
+}
+.river {
+  position: absolute;
+  width: 120%;
+  height: 45px;
+  top: 48%;
+  left: -10%;
+  background: #4f8994;
+  transform: rotate(-8deg);
+  box-shadow: 0 0 0 5px #c4b77944;
+}
+.worldMap button {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  text-shadow: 0 2px 3px #000;
+}
+.worldMap button i {
+  font-size: 30px;
+  border-radius: 50%;
+  background: #30434a;
+  padding: 9px;
+  font-style: normal;
+}
+.worldMap button.available i {
+  animation: pulse 1.5s infinite;
+  background: #9a6a31;
+}
+.worldMap button.owned i {
+  background: #457d54;
+}
+.worldMap button.selected i {
+  outline: 3px solid #f3d28b;
+}
+.worldMap button small {
+  font-size: 9px;
+}
+.worldDetail {
+  position: absolute;
+  right: 20px;
+  top: 110px;
+  width: 290px;
+  padding: 20px;
+}
+.worldDetail h2 {
+  font-family: Cinzel;
+  color: #e9c47e;
+}
+.worldDetail button {
+  width: 100%;
+  background: #8a602d;
+}
+.enemyList {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+.armyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+}
+.roster,
+.recruit {
+  padding: 20px;
+}
+.unit,
+.recruit article {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #ffffff18;
+  padding: 12px;
+}
+.unit i,
+.recruit i {
+  font-size: 35px;
+  font-style: normal;
+}
+.unit span {
+  display: flex;
+  flex-direction: column;
+}
+.unit small {
+  color: #aab9c1;
+}
+.recruit article div {
+  flex: 1;
+}
+.recruit h3,
+.recruit p {
+  margin: 3px;
+}
+.training {
+  background: #8b6932;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+.questList {
+  max-width: 850px;
+  margin: auto;
+}
+.questList article {
+  display: grid;
+  grid-template-columns: 50px 1fr 110px;
+  align-items: center;
+  background: #1e303b;
+  border: 1px solid #536672;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 12px;
+}
+.questList article > i {
+  font: 700 24px Cinzel;
+  background: #354955;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+}
+.questList h3,
+.questList p {
+  margin: 3px;
+}
+.questList p,
+.questList small {
+  color: #aab8c0;
+}
+.questList .complete {
+  border-color: #d9a953;
+  box-shadow: 0 0 15px #c58b2e33;
+}
+.questList .claimed {
+  opacity: 0.65;
+}
+.progress {
+  height: 5px;
+  background: #101a20;
+  margin: 8px 0;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: #d6a64f;
+}
+.tutorial {
+  position: fixed;
+  z-index: 50;
+  left: 105px;
+  bottom: 190px;
+  width: 320px;
+  padding: 18px;
+  background: #f2e4c5;
+  color: #25333a;
+  border: 3px solid #b88845;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px #000b;
+}
+.tutorial:after {
+  content: "";
+  position: absolute;
+  bottom: -17px;
+  left: 45px;
+  border: 8px solid transparent;
+  border-top-color: #b88845;
+}
+.tutorial > span {
+  font-size: 10px;
+  color: #855e30;
+  font-weight: bold;
+}
+.tutorial h3 {
+  font: 700 18px Cinzel;
+  margin: 8px 0;
+}
+.tutorial p {
+  font-size: 13px;
+}
+.tutorial div {
+  display: flex;
+  justify-content: space-between;
+}
+.tutorial button {
+  background: #7d572b;
+}
+.tutorial .ghost {
+  background: transparent;
+  color: #37444a;
+  border: 0;
+}
+.modalShade {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  background: #071015cc;
+  display: grid;
+  place-items: center;
+}
+.modal {
+  position: relative;
+  width: min(480px, 90vw);
+  max-height: 90vh;
+  overflow: auto;
+  background: linear-gradient(#2b404c, #172630);
+  border: 2px solid #ab8147;
+  border-radius: 14px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal h2 {
+  font-family: Cinzel;
+  color: #e8c27d;
+}
+.modal label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.modal textarea {
+  height: 70px;
+  background: #101c24;
+  color: #eee;
+}
+.celebration {
+  text-align: center;
+  align-items: center;
+}
+.celebration > b {
+  color: #eac46f;
+  letter-spacing: 4px;
+}
+.battleOverlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  background: #071017ee;
+  padding: 3vh 4vw;
+}
+.battle {
+  height: 94vh;
+  background: #182832;
+  border: 2px solid #9f7845;
+  border-radius: 15px;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  grid-template-rows: 70px 1fr 60px;
+  overflow: hidden;
+  position: relative;
+}
+.battle > header {
+  grid-column: 1/3;
+  position: static;
+  background: #243a46;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+.battle h2 {
+  margin: 0;
+  font-family: Cinzel;
+  color: #ecc982;
+}
+.battlefield {
+  position: relative;
+  margin: 15px;
+  background: #354e43;
+  border-radius: 8px;
+}
+.battleTile {
+  position: absolute;
+  width: 12.5%;
+  height: 16.66%;
+  border: 1px solid #a8c08425;
+  background: #7c8c5b55;
+}
+.fighter {
+  position: absolute;
+  z-index: 2;
+  width: 10%;
+  height: 14%;
+  padding: 2px;
+  background: #284e70;
+  border: 2px solid #6fa5c9;
+}
+.fighter.enemy {
+  background: #743d3d;
+  border-color: #cb7770;
+}
+.fighter.active {
+  box-shadow: 0 0 20px #ffd55b;
+  transform: scale(1.08);
+}
+.fighter.target {
+  animation: pulse 1s infinite;
+}
+.fighter i {
+  font-style: normal;
+  font-size: 24px;
+}
+.fighter b {
+  position: absolute;
+  bottom: 0;
+  right: 2px;
+  font-size: 10px;
+}
+.battle > aside {
+  padding: 12px;
+  background: #12202a;
+  overflow: auto;
+}
+.battle > aside p {
+  font-size: 11px;
+  border-bottom: 1px solid #ffffff14;
+  padding-bottom: 6px;
+}
+.battle > footer {
+  grid-column: 1/3;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background: #223641;
+}
+.result {
+  position: absolute;
+  inset: 20% 30%;
+  background: #253b46;
+  border: 2px solid #d7aa57;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 80px #000;
+}
+.debug {
+  position: fixed;
+  z-index: 200;
+  right: 10px;
+  bottom: 10px;
+  background: #18151e;
+  border: 1px solid #ee47dc;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.fatal {
+  padding: 50px;
+}
+.fatal h1 {
+  font-family: Cinzel;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}
+@media (max-width: 1350px) {
+  .brand {
+    width: 180px;
+  }
+  .brand strong {
+    font-size: 12px;
+  }
+  .resources > div {
+    min-width: 67px;
+  }
+  .resources small {
+    display: none;
+  }
+  .era {
+    display: none;
+  }
+  .techTree {
+    grid-template-columns: repeat(6, 130px);
+    overflow-x: auto;
+  }
+  .world {
+    padding-right: 270px;
+  }
+  .worldDetail {
+    width: 250px;
+  }
+  .buildbar {
+    height: 160px;
+  }
+  .cityViewport {
+    bottom: 160px;
+  }
+}
+@media (max-width: 900px) {
+  .resources > div:nth-child(n + 5) {
+    display: none;
+  }
+  .nav {
+    width: 64px;
+  }
+  .stage,
+  .buildbar {
+    left: 64px;
+  }
+  .brand {
+    width: 150px;
+  }
+  .armyGrid {
+    grid-template-columns: 1fr;
+  }
+  .detail {
+    width: 240px;
+  }
+  .world {
+    padding: 20px;
+  }
+  .worldDetail {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .worldMap {
+    height: 45vh;
+  }
+}
 
 /* Levné CSS vrstvy dodávají procedurálnímu terénu hloubku bez externích assetů. */
-.tile{contain:layout paint;transition:filter .12s,box-shadow .12s;background:#6f9654}.tile.variant-1{filter:brightness(.96)}.tile.variant-2{filter:brightness(1.04)}.tile.variant-3{filter:saturate(1.12)}
-.terrain-fertile{background:#91a957}.terrain-forest{background:#355f43}.terrain-rock{background:#697276}.terrain-lake{background:#397c91;border-color:#80c7cf88;box-shadow:inset 0 0 10px #b4eced44}.terrainDetail{position:absolute;inset:0;clip-path:inherit;pointer-events:none}
-.terrain-forest .terrainDetail:after{content:'♠';position:absolute;left:23px;top:2px;color:#173c2a;font-size:20px;text-shadow:8px 4px #244c34}.terrain-rock .terrainDetail:after{content:'◆';position:absolute;left:24px;top:5px;color:#a5aa9f;text-shadow:5px 3px #4d5559}.terrain-lake .terrainDetail{background:linear-gradient(155deg,transparent 38%,#b7e9e633 41%,transparent 46%)}.terrain-fertile .terrainDetail{background:radial-gradient(ellipse at center,#d8d16a55 0 8%,transparent 10%)}
-.tile.placement-valid{filter:brightness(1.28) saturate(1.35);box-shadow:inset 0 0 0 3px #72f09b;z-index:90!important}.tile.placement-invalid,.tile.occupied{box-shadow:inset 0 0 0 3px #ef665d;z-index:90!important}.tile.placement-invalid{filter:brightness(.8) saturate(1.5)}
-.roadBuilding{min-height:30px!important;height:32px!important;width:64px!important;transform:none!important;border-radius:0!important;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);box-shadow:none!important;background:#9a7b55!important}.roadBuilding .roof{font-size:16px}.roadBuilding b{display:none}
+.cards > button.unaffordable {
+  border-color: #b95d55;
+  background: #5b2f2b55;
+  opacity: 0.7;
+}
+.tile {
+  contain: layout paint;
+  transition:
+    filter 0.12s,
+    box-shadow 0.12s;
+  background: #6f9654;
+}
+.tile.variant-1 {
+  filter: brightness(0.96);
+}
+.tile.variant-2 {
+  filter: brightness(1.04);
+}
+.tile.variant-3 {
+  filter: saturate(1.12);
+}
+.terrain-fertile {
+  background: #91a957;
+}
+.terrain-forest {
+  background: #355f43;
+}
+.terrain-rock {
+  background: #697276;
+}
+.terrain-lake {
+  background: #397c91;
+  border-color: #80c7cf88;
+  box-shadow: inset 0 0 10px #b4eced44;
+}
+.terrainDetail {
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+  pointer-events: none;
+}
+.terrain-forest .terrainDetail:after {
+  content: "♠";
+  position: absolute;
+  left: 23px;
+  top: 2px;
+  color: #173c2a;
+  font-size: 20px;
+  text-shadow: 8px 4px #244c34;
+}
+.terrain-rock .terrainDetail:after {
+  content: "◆";
+  position: absolute;
+  left: 24px;
+  top: 5px;
+  color: #a5aa9f;
+  text-shadow: 5px 3px #4d5559;
+}
+.terrain-lake .terrainDetail {
+  background: linear-gradient(
+    155deg,
+    transparent 38%,
+    #b7e9e633 41%,
+    transparent 46%
+  );
+}
+.terrain-fertile .terrainDetail {
+  background: radial-gradient(
+    ellipse at center,
+    #d8d16a55 0 8%,
+    transparent 10%
+  );
+}
+.tile.placement-valid {
+  filter: brightness(1.28) saturate(1.35);
+  box-shadow: inset 0 0 0 3px #72f09b;
+  z-index: 90 !important;
+}
+.tile.placement-invalid,
+.tile.occupied {
+  box-shadow: inset 0 0 0 3px #ef665d;
+  z-index: 90 !important;
+}
+.tile.placement-invalid {
+  filter: brightness(0.8) saturate(1.5);
+}
+.roadBuilding {
+  min-height: 30px !important;
+  height: 32px !important;
+  width: 64px !important;
+  transform: none !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  box-shadow: none !important;
+  background: #9a7b55 !important;
+}
+.roadBuilding .roof {
+  font-size: 16px;
+}
+.roadBuilding b {
+  display: none;
+}

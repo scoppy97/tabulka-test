@@ -8,6 +8,7 @@ import {
   freshGame,
   happinessMultiplier,
   occupied,
+  produceResources,
   productionReady,
   roadConnected,
   serialize,
@@ -32,6 +33,17 @@ describe("pravidla města", () => {
     ).toBe(true));
 });
 describe("ekonomika a čas", () => {
+  it("vyrábí každou sekundu podle typu dokončené budovy", () => {
+    const game = freshGame();
+    expect(
+      produceResources(game.resources, game.buildings, 2, Date.now()),
+    ).toMatchObject({
+      gold: game.resources.gold + 4,
+      food: game.resources.food + 2,
+      wood: game.resources.wood,
+      stone: game.resources.stone,
+    });
+  });
   it("počítá stupně spokojenosti", () => {
     expect(happinessMultiplier(40)).toBe(0.7);
     expect(happinessMultiplier(95)).toBe(1.1);
@@ -58,6 +70,7 @@ describe("postup a boj", () => {
 it("serializuje a bezpečně načte hru", () => {
   const g = freshGame();
   expect(deserialize(serialize(g))?.cityName).toBe(g.cityName);
+  expect(deserialize(serialize(g))?.resources).toEqual(g.resources);
   expect(deserialize("{bad")).toBeNull();
 });
 describe("procedurální terén", () => {

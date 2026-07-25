@@ -10,6 +10,7 @@ import {
 } from "../data/content";
 import {
   calculateDamage,
+  canAfford,
   canPlace,
   demographics,
   occupied,
@@ -17,6 +18,7 @@ import {
 } from "../domain/rules";
 import { terrain } from "../domain/terrain";
 import { cs } from "../i18n";
+import { formatCost, resourceDefinitions } from "../data/resources";
 import { useGame } from "../store/gameStore";
 import type { Building, Unit, View } from "../types";
 export class ErrorBoundary extends React.Component<
@@ -161,25 +163,13 @@ function Header({ demo }: { demo: ReturnType<typeof demographics> }) {
         </div>
       </div>
       <div className="resources">
-        {(["coins", "supplies", "wood", "stone", "research"] as const).map(
-          (k) => (
-            <div title={`${cs[k]} – dostupná zásoba`} key={k}>
-              <span>
-                {k === "coins"
-                  ? "🟡"
-                  : k === "supplies"
-                    ? "📦"
-                    : k === "wood"
-                      ? "🪵"
-                      : k === "stone"
-                        ? "🪨"
-                        : "✨"}
-              </span>
-              <b data-testid={`resource-${k}`}>{s.resources[k]}</b>
-              <small>{cs[k]}</small>
-            </div>
-          ),
-        )}
+        {resourceDefinitions.map(({ id, icon, name }) => (
+          <div title={`${name} – dostupná zásoba`} key={id}>
+            <span aria-hidden="true">{icon}</span>
+            <b data-testid={`resource-${id}`}>{s.resources[id]}</b>
+            <small>{name}</small>
+          </div>
+        ))}
         <div title="Využitá a celková populace">
           <span>👥</span>
           <b>
@@ -268,7 +258,9 @@ function City() {
     const cells = new Map<string, boolean>();
     if (!s.placing || !hovered) return cells;
     const d = getBuilding(s.placing),
-      valid = canPlace(s.buildings, s.placing, hovered.x, hovered.y);
+      valid =
+        canAfford(s.resources, d.cost) &&
+        canPlace(s.buildings, s.placing, hovered.x, hovered.y);
     for (let x = hovered.x; x < hovered.x + d.w; x++)
       for (let y = hovered.y; y < hovered.y + d.h; y++)
         cells.set(`${x},${y}`, valid);
@@ -529,23 +521,33 @@ function BuildBar() {
         {buildingDefs
           .filter((d) => d.category === cat)
           .map((d) => {
-            const locked = d.epoch > s.epoch;
+            const locked = d.epoch > s.epoch,
+              starterOnly =
+                d.id === "townhall" &&
+                s.buildings.some((building) => building.type === "townhall"),
+              affordable = canAfford(s.resources, d.cost) && !starterOnly;
             return (
               <button
                 data-testid={`build-${d.id}`}
-                disabled={locked}
+                disabled={locked || !affordable}
                 onClick={() => a.placeMode(d.id)}
-                className={s.placing === d.id ? "chosen" : ""}
+                className={`${s.placing === d.id ? "chosen" : ""}${!locked && !affordable ? " unaffordable" : ""}`}
                 key={d.id}
               >
                 <i style={{ background: d.color }}>{d.icon}</i>
                 <span>
                   <b>{d.name}</b>
                   <small>
-                    {d.w}×{d.h} · 🟡 {d.cost.coins ?? 0}
+                    {d.w}×{d.h} · {formatCost(d.cost)}
                   </small>
                   <small>
-                    {locked ? "🔒 Vyžaduje další epochu" : d.description}
+                    {locked
+                      ? "🔒 Vyžaduje další epochu"
+                      : starterOnly
+                        ? "✓ Počáteční budova již stojí"
+                        : !affordable
+                          ? "⚠ Nedostatek zdrojů"
+                          : d.description}
                   </small>
                 </span>
               </button>
@@ -718,7 +720,7 @@ function Army() {
                   ♥ {u.hp} · ⚔ {u.attack} · 🛡 {u.defense} · dosah {u.range}
                 </p>
                 <small>
-                  🟡 {u.cost.coins} · 📦 {u.cost.supplies} · {u.seconds} s
+                  🟡 {u.cost.gold} · 📦 {u.cost.food} · {u.seconds} s
                 </small>
               </div>
               <button
